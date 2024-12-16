@@ -1,0 +1,1 @@
+# Active-Learning-Platform_PyQT5_Desktop_App
