@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Active Learning Platform</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="styleSheet">
    <property name="styleSheet">
     <string notr="true">
 QWidget{
@@ -46,50 +46,51 @@ Bg App */
 
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
 QTableWidget */
-QTableWidget {	
-	background-color: #444;
-	padding: 5px;
-	border-radius: 8px;
-	gridline-color: #555;
-    color: #FFF;
+QTableWidget {    
+    background-color: #444;
+    padding: 5px;
+    border-radius: 8px;
+    gridline-color: #555;
+    color: black;
+	font: 11pt &quot;Calibri&quot;;
 }
 QTableWidget::item {
-	border-color: none;
-	padding-left: 5px;
-	padding-right: 5px;
-	gridline-color: #555;
+    border-color: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    gridline-color: #555;
     border-bottom: 1px solid #555;
 }
 QTableWidget::item:selected {
-	background-color: #00ABE8;
-	color: #FFF;
+    background-color: #00ABE8;
+    color: #FFF;
 }
 QHeaderView::section {
-	background-color: rgb(189, 147, 249);
-	max-width: 30px;
-	border: 1px solid #555;
-	border-style: none;
-    border-bottom: 1px solid #555;
-    border-right: 1px solid #555;
+    background-color: rgb(189, 147, 249);
+    max-width: 30px;
+    border: 1px solid #BBB;
+    border-style: none;
+    border-bottom: 1px solid #BBB;
+    border-right: 1px solid #BBB;
 }
-QTableWidget::horizontalHeader {	
-	background-color: rgb(189, 147, 249);
+QTableWidget::horizontalHeader {    
+    background-color: rgb(189, 147, 249);
 }
 QTableWidget QTableCornerButton::section {
     border: none;
-	background-color: #333;
-	padding: 3px;
+    background-color: #333;
+    padding: 3px;
     border-top-left-radius: 8px;
 }
 QHeaderView::section:horizontal {
     border: none;
-	background-color: rgb(189, 147, 249) ;
-	padding: 3px;
+    background-color: rgb(189, 147, 249);
+    padding: 3px;
 }
 QHeaderView::section:vertical {
     border: none;
-	background-color: #444;
-	padding-left: 5px;
+    background-color: #444;
+    padding-left: 5px;
     padding-right: 5px;
     border-bottom: 1px solid #555;
     margin-bottom: 1px;
@@ -112,7 +113,7 @@ QScrollBar::handle:horizontal {
     border-radius: 4px;
 }
 QScrollBar::handle:vertical {
-    background: #3333;
+    background: #068fff; /* Changed scrollbar color to #068fff */
     min-height: 20px;
     border-radius: 4px;
 }
@@ -124,6 +125,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal,
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
+
 
 
 
@@ -176,7 +178,7 @@ QScrollBar:horizontal {
 	border-radius: 0px;
 }
 QScrollBar::handle:horizontal {
-    background: rgb(189, 147, 249);
+    background:#068fff;;
     min-width: 25px;
 	border-radius: 4px
 }
@@ -214,7 +216,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
 	border-radius: 0px;
  }
  QScrollBar::handle:vertical {	
-	background: rgb(189, 147, 249);
+	background: #068fff;;
     min-height: 25px;
 	border-radius: 4px
  }
@@ -571,7 +573,7 @@ QPushButton:pressed {
               <number>7</number>
              </property>
              <item>
-              <widget class="QPushButton" name="btnSensorManagement">
+              <widget class="QPushButton" name="btnHome">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -603,7 +605,7 @@ QPushButton:pressed {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnCameraManagement">
+              <widget class="QPushButton" name="btnData">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -635,7 +637,7 @@ QPushButton:pressed {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnUserManagement">
+              <widget class="QPushButton" name="btnModel">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -661,7 +663,7 @@ QPushButton:pressed {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="btnStartTraining">
+              <widget class="QPushButton" name="btnHelp">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -972,7 +974,7 @@ color:#515151;
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_4">
                        <property name="leftMargin">
-                        <number>65</number>
+                        <number>15</number>
                        </property>
                        <property name="topMargin">
                         <number>0</number>
@@ -991,7 +993,7 @@ color:#515151;
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="pushButton_3">
+                        <widget class="QPushButton" name="btnBrowse">
                          <property name="minimumSize">
                           <size>
                            <width>100</width>
@@ -1030,11 +1032,161 @@ color:#515151;
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_15">
+                       <property name="leftMargin">
+                        <number>15</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>11</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>11</number>
+                       </property>
                        <property name="bottomMargin">
                         <number>30</number>
                        </property>
                        <item>
-                        <widget class="QTableWidget" name="tableWidget"/>
+                        <widget class="QTableWidget" name="dataTable">
+                         <property name="editTriggers">
+                          <set>QAbstractItemView::NoEditTriggers</set>
+                         </property>
+                         <property name="alternatingRowColors">
+                          <bool>true</bool>
+                         </property>
+                         <property name="showGrid">
+                          <bool>true</bool>
+                         </property>
+                         <property name="sortingEnabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="rowCount">
+                          <number>50</number>
+                         </property>
+                         <attribute name="horizontalHeaderCascadingSectionResizes">
+                          <bool>false</bool>
+                         </attribute>
+                         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                          <bool>false</bool>
+                         </attribute>
+                         <attribute name="horizontalHeaderStretchLastSection">
+                          <bool>true</bool>
+                         </attribute>
+                         <attribute name="verticalHeaderVisible">
+                          <bool>true</bool>
+                         </attribute>
+                         <attribute name="verticalHeaderCascadingSectionResizes">
+                          <bool>false</bool>
+                         </attribute>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <row/>
+                         <column>
+                          <property name="text">
+                           <string>Column1</string>
+                          </property>
+                         </column>
+                         <column>
+                          <property name="text">
+                           <string>Column2</string>
+                          </property>
+                         </column>
+                         <column>
+                          <property name="text">
+                           <string>Column3</string>
+                          </property>
+                         </column>
+                         <column>
+                          <property name="text">
+                           <string>Column4</string>
+                          </property>
+                         </column>
+                         <item row="0" column="0">
+                          <property name="text">
+                           <string>Hi</string>
+                          </property>
+                         </item>
+                         <item row="0" column="1">
+                          <property name="text">
+                           <string>Hello</string>
+                          </property>
+                         </item>
+                         <item row="0" column="2">
+                          <property name="text">
+                           <string>Ali</string>
+                          </property>
+                         </item>
+                         <item row="0" column="3">
+                          <property name="text">
+                           <string>Haider</string>
+                          </property>
+                         </item>
+                         <item row="1" column="0">
+                          <property name="text">
+                           <string>mkmj</string>
+                          </property>
+                         </item>
+                         <item row="1" column="1">
+                          <property name="text">
+                           <string>hb</string>
+                          </property>
+                         </item>
+                         <item row="1" column="2">
+                          <property name="text">
+                           <string>vg</string>
+                          </property>
+                         </item>
+                         <item row="1" column="3">
+                          <property name="text">
+                           <string>vb</string>
+                          </property>
+                         </item>
+                        </widget>
                        </item>
                        <item alignment="Qt::AlignRight">
                         <widget class="QPushButton" name="pushButton_4">
