@@ -18,6 +18,12 @@ class MainScreen(QtWidgets.QMainWindow):
         self.btnHelp.clicked.connect(lambda: self.on_menu_button_click('help'))
         self.btnBrowse.clicked.connect(self.open_file_dialog)
 
+        self.btnHome.setStyleSheet(get_active_button_stylesheet())
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(':/images/images/icons/icons8-home-30.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btnHome.setIcon(icon)
+        self.btnHome.setIconSize(QtCore.QSize(30, 30))
+
         self.dataTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)  # Adjust column widths
 
     def open_file_dialog(self):
