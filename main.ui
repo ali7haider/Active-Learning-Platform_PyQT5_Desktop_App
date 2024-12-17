@@ -17,8 +17,8 @@
    <property name="styleSheet">
     <string notr="true">
 QWidget{
-	color: rgb(221, 221, 221);
-	font: 12pt &quot;Segoe UI&quot;;
+	color: black;
+	font: 75 11pt &quot;Calibri&quot;;
 
 }
 
@@ -380,10 +380,12 @@ QCommandLinkButton:pressed {
 
 QPushButton {
     color: white;                      /* Text color */
-    border-radius: 2px;                /* Rounded corners */
+    border-radius: 5px;                /* Rounded corners */
     padding: 6px 12px;                 /* Padding inside button */
     font-weight: bold;                 /* Bold text */
 	background-color:#068fff;
+	font:  15pt &quot;Calibri&quot;;
+
 
 }
 
@@ -464,18 +466,24 @@ font-size:12px;
         <widget class="QFrame" name="sideBar">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>220</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>260</width>
+           <width>220</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QPushButton {
+    padding-left: 10px; /* Add padding for spacing */
+    padding-right: 0px; /* Remove right padding to avoid extra space */
+    text-align: left; /* Align text and image to the left */
+
+}
+</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -568,14 +576,30 @@ font-size:12px;
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>50</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
                <property name="text">
-                <string>Home</string>
+                <string>  Home</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/images/images/icons/icons8-home-50.png</normaloff>:/images/images/icons/icons8-home-50.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>30</width>
+                 <height>30</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -590,8 +614,24 @@ font-size:12px;
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
                <property name="text">
-                <string>Data</string>
+                <string>  Data</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/images/images/icons/icons8-table-50.png</normaloff>:/images/images/icons/icons8-table-50.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>30</width>
+                 <height>30</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -607,7 +647,17 @@ font-size:12px;
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="text">
-                <string>Model</string>
+                <string>  Model</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/images/images/icons/icons8-machine-learning-50.png</normaloff>:/images/images/icons/icons8-machine-learning-50.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>30</width>
+                 <height>30</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -623,7 +673,17 @@ font-size:12px;
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="text">
-                <string>Help</string>
+                <string>  Help</string>
+               </property>
+               <property name="icon">
+                <iconset resource="resources.qrc">
+                 <normaloff>:/images/images/icons/icons8-help-50.png</normaloff>:/images/images/icons/icons8-help-50.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>30</width>
+                 <height>30</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -658,58 +718,62 @@ font-size:12px;
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="frame_4">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
+           <widget class="QStackedWidget" name="stackedWidget">
+            <property name="styleSheet">
+             <string notr="true">background-color:white;</string>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="sizeIncrement">
-             <size>
-              <width>0</width>
-              <height>1</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame_2">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
+            <widget class="QWidget" name="homePage">
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_2">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="font">
+                    <font>
+                     <family>Calibri</family>
+                     <pointsize>20</pointsize>
+                     <weight>9</weight>
+                     <italic>false</italic>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:black;
+font: 75 20pt &quot;Calibri&quot;;</string>
+                   </property>
+                   <property name="text">
+                    <string>Home</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_2"/>
            </widget>
           </item>
          </layout>
