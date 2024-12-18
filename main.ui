@@ -307,7 +307,7 @@ QComboBox::drop-down {
 	border-left-style: solid;
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;	
-	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);
+	background-image: url(:/images/images/icons/cil-arrow-bottom.png);
 	background-position: center;
 	background-repeat: no-reperat;
  }
@@ -729,7 +729,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -1640,6 +1640,7 @@ border-top-right-radius: 10px; /* Rounded top-right corner */
                           <string notr="true">QLabel{
 	font:  12pt &quot;Calibri&quot;;
 	font: 75 14pt &quot;Calibri&quot;;
+font-weight:bold;
 color:#fff;
 
 }</string>
@@ -1688,7 +1689,10 @@ color:#fff;
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_8">
                        <item>
-                        <widget class="QPushButton" name="pushButton_4">
+                        <widget class="QPushButton" name="btnSingleObj">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
                          <property name="styleSheet">
                           <string notr="true">
 QPushButton {
@@ -1709,7 +1713,10 @@ color:#515151;
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="pushButton_5">
+                        <widget class="QPushButton" name="btnMultiObj">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
                          <property name="styleSheet">
                           <string notr="true">QPushButton {
     color: white;                      /* Text color */
@@ -1730,6 +1737,289 @@ color:#515151;
                      </widget>
                     </item>
                    </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="SingleObjPage">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+	font:  12pt &quot;Calibri&quot;;
+color:black;
+}</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_23">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_26">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_24">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QFrame" name="frame_27">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>100</height>
+                    </size>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_25">
+                    <item>
+                     <widget class="QLabel" name="label_12">
+                      <property name="styleSheet">
+                       <string notr="true">font: 14pt &quot;Calibri&quot;;</string>
+                      </property>
+                      <property name="text">
+                       <string>Single Objective Experiment</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_28">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_26">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>11</number>
+                    </property>
+                    <item>
+                     <widget class="QFrame" name="frame_29">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_27">
+                       <item>
+                        <widget class="QLabel" name="label_13">
+                         <property name="styleSheet">
+                          <string notr="true">font: 13pt &quot;Calibri&quot;;</string>
+                         </property>
+                         <property name="text">
+                          <string>Define the Search Space</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_30">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="batchPage">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+	font:  12pt &quot;Calibri&quot;;
+color:black;
+}</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_28">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="frame_31">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_29">
+                 <property name="bottomMargin">
+                  <number>20</number>
+                 </property>
+                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+                  <widget class="QFrame" name="frame_32">
+                   <property name="minimumSize">
+                    <size>
+                     <width>750</width>
+                     <height>350</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#frame_32{
+border:2px solid grey;
+border-radius:5px;
+}
+</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_5">
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="lineEdit">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_14">
+                      <property name="text">
+                       <string>Batch Size:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="label_15">
+                      <property name="text">
+                       <string>Target (i.e What want to optimize)</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_16">
+                      <property name="text">
+                       <string>N_Var</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_17">
+                      <property name="text">
+                       <string>N_Obj</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="lineEdit_2">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="lineEdit_3">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QComboBox" name="comboBox">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item alignment="Qt::AlignRight">
+                  <widget class="QPushButton" name="pushButton_4">
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    color: white;                      /* Text color */
+    border-radius: 6px;                /* Rounded corners */
+    padding: 6px 12px;                 /* Padding inside button */
+    font-weight: bold;                 /* Bold text */
+    background-color: #f2f2f2;
+    font:  12pt &quot;Calibri&quot;;
+    color: #515151;
+    box-shadow: 0 4px 6px rgba(128, 128, 128, 0.2); /* Grey shadow */
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Run Experiment</string>
+                   </property>
                   </widget>
                  </item>
                 </layout>
