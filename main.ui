@@ -729,7 +729,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -1609,6 +1609,25 @@ color:black;
                      <height>300</height>
                     </size>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">#frame_23 {
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
+}
+
+#frame_24 {
+    border-left: 2px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
+}
+
+#frame_25 {
+    border-left: 2px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
+    border-bottom: 2px solid #f2f2f2;
+}
+</string>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -1616,6 +1635,9 @@ color:black;
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_20">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
                     <property name="topMargin">
                      <number>100</number>
                     </property>
@@ -1932,7 +1954,7 @@ border-radius:5px;
                    </property>
                    <layout class="QGridLayout" name="gridLayout_5">
                     <item row="0" column="1">
-                     <widget class="QLineEdit" name="lineEdit">
+                     <widget class="QLineEdit" name="txtBatchSize">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -1951,26 +1973,26 @@ border-radius:5px;
                     <item row="3" column="0">
                      <widget class="QLabel" name="label_15">
                       <property name="text">
-                       <string>Target (i.e What want to optimize)</string>
+                       <string>Target (i.e What want to optimize):</string>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_16">
                       <property name="text">
-                       <string>N_Var</string>
+                       <string>N_Var:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="2" column="0">
                      <widget class="QLabel" name="label_17">
                       <property name="text">
-                       <string>N_Obj</string>
+                       <string>N_Obj:</string>
                       </property>
                      </widget>
                     </item>
                     <item row="1" column="1">
-                     <widget class="QLineEdit" name="lineEdit_2">
+                     <widget class="QLineEdit" name="txtNVar">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -1980,7 +2002,7 @@ border-radius:5px;
                      </widget>
                     </item>
                     <item row="2" column="1">
-                     <widget class="QLineEdit" name="lineEdit_3">
+                     <widget class="QLineEdit" name="txtNObj">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -1990,7 +2012,7 @@ border-radius:5px;
                      </widget>
                     </item>
                     <item row="3" column="1">
-                     <widget class="QComboBox" name="comboBox">
+                     <widget class="QComboBox" name="cmbxTarget">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -2003,7 +2025,7 @@ border-radius:5px;
                   </widget>
                  </item>
                  <item alignment="Qt::AlignRight">
-                  <widget class="QPushButton" name="pushButton_4">
+                  <widget class="QPushButton" name="btnRunExperiment">
                    <property name="styleSheet">
                     <string notr="true">QPushButton {
     color: white;                      /* Text color */
