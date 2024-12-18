@@ -7,6 +7,7 @@ class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
         uic.loadUi('main.ui', self)  # Load the UI file
+        self.stackedWidget.setCurrentIndex(0)
 
         # Connect browse button to the function
         self.btnBrowse = self.findChild(QtWidgets.QPushButton, 'btnBrowse')  # Find the browse button by its name
@@ -17,6 +18,7 @@ class MainScreen(QtWidgets.QMainWindow):
         self.btnModel.clicked.connect(lambda: self.on_menu_button_click('model'))
         self.btnHelp.clicked.connect(lambda: self.on_menu_button_click('help'))
         self.btnBrowse.clicked.connect(self.open_file_dialog)
+        self.btnNext.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
 
         self.btnHome.setStyleSheet(get_active_button_stylesheet())
         icon = QtGui.QIcon()
@@ -99,8 +101,8 @@ class MainScreen(QtWidgets.QMainWindow):
         page_index = {
             'home': 0,
             'data': 1,
-            'model': 2,
-            'help': 3
+            'model': 3,
+            'help': 4
         }
         self.stackedWidget.setCurrentIndex(page_index[page_name])
     def set_button_styles(self,button, page_name, icon_path):
