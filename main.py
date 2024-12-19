@@ -107,9 +107,8 @@ class MainScreen(QtWidgets.QMainWindow):
                         input_frame_layout = self.get_qframe_in_layout(item) 
                         if input_frame_layout:
                             input_frame_layout.deleteLater() 
-                    item.layout().deleteLater() 
-                elif item.widget():
-                    item.widget().deleteLater()
+                    column_label_widget = item.itemAt(0).widget()
+                    column_label_widget.deleteLater() 
             # Update the frame to reflect the changes
             self.frameSearchSpace.update() 
 
