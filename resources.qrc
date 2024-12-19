@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="images">
+    <file>images/icons/icons8-arrow-down-20.png</file>
     <file>images/icons/cil-arrow-bottom.png</file>
     <file>images/icons/cil-folder-open.png</file>
     <file>images/icons/icons8-database-30 (1).png</file>
