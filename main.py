@@ -9,7 +9,7 @@ import subprocess
 import threading
 import json     
 import os
-from objective_files.test_single import run_optimization
+from objective_files.single_objective_code_func import run_optimization
 class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
