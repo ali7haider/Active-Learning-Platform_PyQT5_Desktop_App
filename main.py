@@ -347,7 +347,7 @@ class MainScreen(QtWidgets.QMainWindow):
             'home': 0,
             'data': 1,
             'model': 3,
-            'help': 4
+            'help': 7
         }
         self.stackedWidget.setCurrentIndex(page_index[page_name])
     def set_button_styles(self,button, page_name, icon_path):
