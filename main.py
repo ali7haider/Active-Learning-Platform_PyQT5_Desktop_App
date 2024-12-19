@@ -145,50 +145,20 @@ class MainScreen(QtWidgets.QMainWindow):
             except ValueError:
                 QtWidgets.QMessageBox.critical(None, "Error", "Invalid numeric input. Please enter valid integers.")
                 return
-
-            
-            self.run_experiment(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)
-
-            # Proceed with experiment logic here...
-
+            self.stackedWidget.setCurrentIndex(6)           
+            # Start the experiment in a separate thread
+            self.experiment_thread = ExperimentThread(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)
+            self.experiment_thread.finished.connect(self.handle_experiment_result)
+            self.experiment_thread.start()
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
-
-    def run_experiment(self, batch_size, n_obj, n_var, target_column, df, column_bounds):
-        try:
-            # Parse the column bounds into lower and upper bounds, excluding the target column
-            lower_bounds = [column_bounds[col]['lower'] for col in column_bounds.keys() if col != target_column]
-            upper_bounds = [column_bounds[col]['upper'] for col in column_bounds.keys() if col != target_column]
-        # Ensure bounds are numeric
-            lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
-            upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
-
-            # Check if the DataFrame contains the required columns
-            if target_column not in df.columns:
-                raise ValueError(f"Target column '{target_column}' is not in the DataFrame.")
-
-            # Call the optimization function
-            optimized_candidates = run_optimization(
-                df=df,
-                lower_bounds=lower_bounds,
-                upper_bounds=upper_bounds,
-                n_var=n_var,
-                n_obj=n_obj,
-               target_column=target_column,    
-                batch_size=batch_size
-            )
-
-            # Display the results or save them
-            print("Optimized Candidates:")
-            print(optimized_candidates)
-
-            # Example: Show results in a table widget
-            # self.show_results_in_table(optimized_candidates)
-
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
-
+    def handle_experiment_result(self, result):
+        if isinstance(result, pd.DataFrame):
+            print('Result',result)  # Update UI or display results here
+        else:
+            QtWidgets.QMessageBox.critical(None, "Error", result)
+    
     def show_columns_for_bounds(self):
         try:
            # Clear existing layouts (if any)
@@ -359,6 +329,56 @@ class MainScreen(QtWidgets.QMainWindow):
         button.setIcon(icon)
         button.setIconSize(QtCore.QSize(30, 30))
     
+
+class ExperimentThread(QtCore.QThread):
+    finished = QtCore.pyqtSignal(object)  # Signal to emit the result
+
+    def __init__(self, batch_size, n_obj, n_var, target_column, df, column_bounds):
+        super().__init__()
+        self.batch_size = batch_size
+        self.n_obj = n_obj
+        self.n_var = n_var
+        self.target_column = target_column
+        self.df = df
+        self.column_bounds = column_bounds
+
+    def run(self):
+        try:
+            # Run the experiment in the background
+            result = self.run_experiment(
+                self.batch_size, self.n_obj, self.n_var, self.target_column, self.df, self.column_bounds
+            )
+            self.finished.emit(result)  # Emit the result when done
+        except Exception as e:
+            self.finished.emit(f"Error: {str(e)}")
+    def run_experiment(self, batch_size, n_obj, n_var, target_column, df, column_bounds):
+        try:
+            # Parse the column bounds into lower and upper bounds, excluding the target column
+            lower_bounds = [column_bounds[col]['lower'] for col in column_bounds.keys() if col != target_column]
+            upper_bounds = [column_bounds[col]['upper'] for col in column_bounds.keys() if col != target_column]
+            # Ensure bounds are numeric
+            lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
+            upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
+
+            # Check if the DataFrame contains the required columns
+            if target_column not in df.columns:
+                raise ValueError(f"Target column '{target_column}' is not in the DataFrame.")
+
+            # Call the optimization function
+            df_candidates = run_optimization(
+                df=df,
+                lower_bounds=lower_bounds,
+                upper_bounds=upper_bounds,
+                n_var=n_var,
+                n_obj=n_obj,
+               target_column=target_column,    
+                batch_size=batch_size
+            )
+
+            return df_candidates
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
+
 
 # Main application
 app = QtWidgets.QApplication(sys.argv)
