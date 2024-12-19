@@ -10,35 +10,36 @@ class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
         uic.loadUi('main.ui', self)  # Load the UI file
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(0)  # Set initial page to index 0
         self.file_path = None  # Variable to store the file path
-        self.df=None
-        self.column_bounds=None
-
+        self.df = None  # DataFrame variable
+        self.column_bounds = None  # Bounds for columns
 
         # Connect browse button to the function
-        self.btnBrowse = self.findChild(QtWidgets.QPushButton, 'btnBrowse')  # Find the browse button by its name
+        self.btnBrowse.clicked.connect(self.open_file_dialog)  # Open file dialog when clicked
 
         # Connect menu buttons to their functions
-        self.btnHome.clicked.connect(lambda: self.on_menu_button_click('home'))
-        self.btnData.clicked.connect(lambda: self.on_menu_button_click('data'))
-        self.btnModel.clicked.connect(lambda: self.on_menu_button_click('model'))
-        self.btnHelp.clicked.connect(lambda: self.on_menu_button_click('help'))
-        self.btnBrowse.clicked.connect(self.open_file_dialog)
-        self.btnNext.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
+        self.btnHome.clicked.connect(lambda: self.on_menu_button_click('home'))  # Navigate to home page
+        self.btnData.clicked.connect(lambda: self.on_menu_button_click('data'))  # Navigate to data page
+        self.btnModel.clicked.connect(lambda: self.on_menu_button_click('model'))  # Navigate to model page
+        self.btnHelp.clicked.connect(lambda: self.on_menu_button_click('help'))  # Navigate to help page
+        self.btnNext.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))  # Move to the next page
 
+        # Set stylesheet for home button
         self.btnHome.setStyleSheet(get_active_button_stylesheet())
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(':/images/images/icons/icons8-home-30.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnHome.setIcon(icon)
         self.btnHome.setIconSize(QtCore.QSize(30, 30))
-        self.dataTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)  # Adjust column widths
+
+        # Adjust column widths of the data table
+        self.dataTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
         # Connect buttons to their handlers
-        self.btnSingleObj.clicked.connect(self.handle_single_obj_click)
-        self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)
-        self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)
-        self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)
+        self.btnSingleObj.clicked.connect(self.handle_single_obj_click)  # Handle single objective button click
+        self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)  # Handle multi-objective button click
+        self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)  # Collect column bounds
+        self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)  # Run the experiment
 
     def get_qframe_in_layout(self,layout):
         item = layout.itemAt(1)
