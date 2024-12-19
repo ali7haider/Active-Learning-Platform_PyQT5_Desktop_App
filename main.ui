@@ -141,7 +141,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
 LineEdit */
 QLineEdit {
-background-color: rgb(33, 37, 43);
+	background-color: rgb(33, 37, 43);
 	border-radius: 5px;
 	border: 2px solid rgb(33, 37, 43);
 	padding-left: 10px;
@@ -316,8 +316,8 @@ QComboBox::drop-down {
 	background-repeat: no-reperat;
  }
 QComboBox QAbstractItemView {
-	color: rgb(255, 121, 198);	
-	background-color: rgb(33, 37, 43);
+	color:black;
+	background-color:#fff;
 	padding: 10px;
 	selection-background-color: rgb(39, 44, 54);
 }
@@ -334,7 +334,7 @@ QSlider::groove:horizontal:hover {
 	background-color: rgb(55, 62, 76);
 }
 QSlider::handle:horizontal {
-    background-color: rgb(189, 147, 249);
+    	background-color:#068fff;
     border: none;
     height: 10px;
     width: 10px;
@@ -358,7 +358,7 @@ QSlider::groove:vertical:hover {
 	background-color: rgb(55, 62, 76);
 }
 QSlider::handle:vertical {
-    background-color: rgb(189, 147, 249);
+	background-color:#068fff;
 	border: none;
     height: 10px;
     width: 10px;
@@ -385,7 +385,7 @@ QCommandLinkButton:hover {
 	background-color: rgb(44, 49, 60);
 }
 QCommandLinkButton:pressed {	
-	color: rgb(189, 147, 249);
+	background-color:#068fff;
 	background-color: rgb(52, 58, 71);
 }
 
