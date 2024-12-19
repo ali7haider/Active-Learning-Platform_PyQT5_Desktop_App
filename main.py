@@ -5,7 +5,10 @@ from stylesheet_helper import get_button_stylesheet, get_active_button_styleshee
 import pandas as pd
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QLayout,QLineEdit
-
+import subprocess
+import threading
+import json     
+import os
 class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
@@ -142,15 +145,38 @@ class MainScreen(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.critical(None, "Error", "Invalid numeric input. Please enter valid integers.")
                 return
 
-            # Now you can use these values for your experiment logic
-            # For example:
-            print(f"Batch Size: {batch_size}, N Objectives: {n_obj}, N Variables: {n_var}, Target Column: {target_column}")
+            
+            threading.Thread(target=self.run_experiment, args=(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)).start()
 
             # Proceed with experiment logic here...
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
+    def run_experiment(self, batch_size, n_obj, n_var, target_column, df, column_bounds):
+        try:
+            # Path to the .py file
+            py_script_path = "path_to_your_script/single_objective_code.py"
+
+            # Prepare arguments for the script
+            args = [str(batch_size), str(n_obj), str(n_var), target_column]
+
+            # Save dataframe to a temporary CSV file
+            df_path = "temp_df.csv"
+            df.to_csv(df_path, index=False)
+
+            # Prepare environment variables for the script
+            env = {
+                **os.environ,  # use existing environment variables
+                'COLUMN_BOUNDS': json.dumps(column_bounds),  # pass column_bounds as a JSON string
+                'DATAFRAME_PATH': df_path  # path to the temporary CSV
+            }
+
+            # Run the .py script with arguments and environment variables
+            subprocess.run(["python", py_script_path] + args, check=True, env=env)
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
     def show_columns_for_bounds(self):
         try:
            # Clear existing layouts (if any)
