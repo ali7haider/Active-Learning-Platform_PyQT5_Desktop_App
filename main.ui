@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -1152,7 +1152,7 @@ color:#515151;
                           <bool>true</bool>
                          </attribute>
                          <attribute name="verticalHeaderVisible">
-                          <bool>false</bool>
+                          <bool>true</bool>
                          </attribute>
                          <attribute name="verticalHeaderCascadingSectionResizes">
                           <bool>false</bool>

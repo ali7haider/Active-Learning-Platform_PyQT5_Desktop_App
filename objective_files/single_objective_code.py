@@ -69,6 +69,9 @@ train_x = torch.tensor(df.iloc[:,:n_var].to_numpy(), **tkwargs)
 train_obj = torch.tensor(df.iloc[:,n_var:n_var+n_obj].to_numpy(), **tkwargs)
 
 """### Train Gaussian Process"""
+# Debug: print training data shapes
+print(f"train_x shape: {train_x.shape}")
+print(f"train_obj shape: {train_obj.shape}")
 
 train_x_gp = normalize(train_x, problem_bounds)
 train_y = train_obj
@@ -101,4 +104,4 @@ new_x = new_x.cpu().numpy()
 # Generate 50 optimized candidates
 df_candidates= pd.DataFrame(new_x, columns=df.columns[1:])
 df_candidates = df_candidates.round(2)
-df_candidates
+print(df_candidates)

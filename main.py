@@ -9,6 +9,7 @@ import subprocess
 import threading
 import json     
 import os
+from objective_files.test_single import run_optimization
 class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
@@ -146,37 +147,48 @@ class MainScreen(QtWidgets.QMainWindow):
                 return
 
             
-            threading.Thread(target=self.run_experiment, args=(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)).start()
+            self.run_experiment(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)
 
             # Proceed with experiment logic here...
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
+
     def run_experiment(self, batch_size, n_obj, n_var, target_column, df, column_bounds):
         try:
-            # Path to the .py file
-            py_script_path = "path_to_your_script/single_objective_code.py"
+            # Parse the column bounds into lower and upper bounds, excluding the target column
+            lower_bounds = [column_bounds[col]['lower'] for col in column_bounds.keys() if col != target_column]
+            upper_bounds = [column_bounds[col]['upper'] for col in column_bounds.keys() if col != target_column]
+        # Ensure bounds are numeric
+            lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
+            upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
 
-            # Prepare arguments for the script
-            args = [str(batch_size), str(n_obj), str(n_var), target_column]
+            # Check if the DataFrame contains the required columns
+            if target_column not in df.columns:
+                raise ValueError(f"Target column '{target_column}' is not in the DataFrame.")
 
-            # Save dataframe to a temporary CSV file
-            df_path = "temp_df.csv"
-            df.to_csv(df_path, index=False)
+            # Call the optimization function
+            optimized_candidates = run_optimization(
+                df=df,
+                lower_bounds=lower_bounds,
+                upper_bounds=upper_bounds,
+                n_var=n_var,
+                n_obj=n_obj,
+               target_column=target_column,    
+                batch_size=batch_size
+            )
 
-            # Prepare environment variables for the script
-            env = {
-                **os.environ,  # use existing environment variables
-                'COLUMN_BOUNDS': json.dumps(column_bounds),  # pass column_bounds as a JSON string
-                'DATAFRAME_PATH': df_path  # path to the temporary CSV
-            }
+            # Display the results or save them
+            print("Optimized Candidates:")
+            print(optimized_candidates)
 
-            # Run the .py script with arguments and environment variables
-            subprocess.run(["python", py_script_path] + args, check=True, env=env)
+            # Example: Show results in a table widget
+            # self.show_results_in_table(optimized_candidates)
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
+
     def show_columns_for_bounds(self):
         try:
            # Clear existing layouts (if any)
