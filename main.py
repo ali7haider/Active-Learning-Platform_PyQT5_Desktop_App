@@ -87,15 +87,32 @@ class MainScreen(QtWidgets.QMainWindow):
                     else:
                         print(f"Input frame layout at index {i} is None.")
             self.column_bounds = bounds_dict
-            print(self.column_bounds)   
             # Change stack widget page after collecting column bounds
-            self.stackedWidget.setCurrentIndex(5)  # Assuming the next page is indexed at 1
-
+            self.change_stack_widget_page_and_fill_combo()
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
 
-            
+    def change_stack_widget_page_and_fill_combo(self):
+        try:
+            # Change the stack widget to the desired page (assuming page 5)
+            self.stackedWidget.setCurrentIndex(5)
+
+            # Check if the DataFrame is loaded
+            if not hasattr(self, 'df') or self.df is None:
+                QtWidgets.QMessageBox.warning(None, "Warning", "No data loaded to fill the combo box.")
+                return
+
+            # Get the column names from the DataFrame
+            column_names = self.df.columns
+
+            # Fill the combo box with these column names
+            self.cmbxTarget.clear()  # Clear existing items first
+            self.cmbxTarget.addItems(column_names)
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")        
+        
     def show_columns_for_bounds(self):
         try:
            # Clear existing layouts (if any)
