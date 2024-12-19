@@ -52,6 +52,8 @@ QTableWidget {
     border-radius: 8px;
     gridline-color: #555;
     color: black;
+    text-align: center;
+
 	font: 11pt &quot;Calibri&quot;;
 }
 QTableWidget::item {
@@ -60,6 +62,8 @@ QTableWidget::item {
     padding-right: 5px;
     gridline-color: #555;
     border-bottom: 1px solid #555;
+    text-align: center;
+
 }
 QTableWidget::item:selected {
     background-color: #00ABE8;
@@ -729,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -1889,6 +1893,145 @@ color:black;
                       <property name="frameShadow">
                        <enum>QFrame::Raised</enum>
                       </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_30">
+                       <item>
+                        <widget class="QScrollArea" name="scrollArea">
+                         <property name="widgetResizable">
+                          <bool>true</bool>
+                         </property>
+                         <widget class="QWidget" name="scrollAreaWidgetContents">
+                          <property name="geometry">
+                           <rect>
+                            <x>0</x>
+                            <y>0</y>
+                            <width>920</width>
+                            <height>563</height>
+                           </rect>
+                          </property>
+                          <layout class="QVBoxLayout" name="verticalLayout_32">
+                           <property name="spacing">
+                            <number>0</number>
+                           </property>
+                           <property name="leftMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="topMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="rightMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="bottomMargin">
+                            <number>0</number>
+                           </property>
+                           <item>
+                            <widget class="QFrame" name="mainFrame">
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QVBoxLayout" name="verticalLayout_31">
+                              <property name="spacing">
+                               <number>0</number>
+                              </property>
+                              <property name="leftMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignRight">
+                               <widget class="QFrame" name="frame_34">
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>50</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">font: 14pt &quot;Calibri&quot;;</string>
+                                </property>
+                                <property name="frameShape">
+                                 <enum>QFrame::StyledPanel</enum>
+                                </property>
+                                <property name="frameShadow">
+                                 <enum>QFrame::Raised</enum>
+                                </property>
+                                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                                 <property name="spacing">
+                                  <number>80</number>
+                                 </property>
+                                 <property name="rightMargin">
+                                  <number>40</number>
+                                 </property>
+                                 <item>
+                                  <widget class="QLabel" name="label_18">
+                                   <property name="text">
+                                    <string>Lower Bound</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QLabel" name="label_19">
+                                   <property name="text">
+                                    <string>Upper Bound</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                </layout>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QFrame" name="frameSearchSpace">
+                                <property name="frameShape">
+                                 <enum>QFrame::StyledPanel</enum>
+                                </property>
+                                <property name="frameShadow">
+                                 <enum>QFrame::Raised</enum>
+                                </property>
+                                <layout class="QVBoxLayout" name="verticalLayout_33"/>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                          </layout>
+                         </widget>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignRight">
+                        <widget class="QPushButton" name="btnSubmitSingleObj">
+                         <property name="minimumSize">
+                          <size>
+                           <width>120</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QPushButton {
+    color: white;                      /* Text color */
+    padding: 6px 12px;                 /* Padding inside button */
+    font-weight: bold;                 /* Bold text */
+	background-color:#068fff;
+	font:  12pt &quot;Calibri&quot;;
+	border-radius:5px;
+
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>Submit</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                    </layout>
@@ -2029,15 +2172,13 @@ border-radius:5px;
                    <property name="styleSheet">
                     <string notr="true">QPushButton {
     color: white;                      /* Text color */
-    border-radius: 6px;                /* Rounded corners */
     padding: 6px 12px;                 /* Padding inside button */
     font-weight: bold;                 /* Bold text */
-    background-color: #f2f2f2;
-    font:  12pt &quot;Calibri&quot;;
-    color: #515151;
-    box-shadow: 0 4px 6px rgba(128, 128, 128, 0.2); /* Grey shadow */
-}
-</string>
+	background-color:#068fff;
+	font:  12pt &quot;Calibri&quot;;
+	border-radius:5px;
+
+}</string>
                    </property>
                    <property name="text">
                     <string>Run Experiment</string>

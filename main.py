@@ -3,11 +3,15 @@ from PyQt5 import QtWidgets, uic, QtGui, QtCore
 import resources_rc
 from stylesheet_helper import get_button_stylesheet, get_active_button_stylesheet
 import pandas as pd
+from PyQt5.QtCore import Qt
 class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
         uic.loadUi('main.ui', self)  # Load the UI file
         self.stackedWidget.setCurrentIndex(0)
+        self.file_path = None  # Variable to store the file path
+        self.df=None
+
 
         # Connect browse button to the function
         self.btnBrowse = self.findChild(QtWidgets.QPushButton, 'btnBrowse')  # Find the browse button by its name
@@ -25,9 +29,81 @@ class MainScreen(QtWidgets.QMainWindow):
         icon.addPixmap(QtGui.QPixmap(':/images/images/icons/icons8-home-30.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnHome.setIcon(icon)
         self.btnHome.setIconSize(QtCore.QSize(30, 30))
-
         self.dataTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)  # Adjust column widths
 
+        # Connect buttons to their handlers
+        self.btnSingleObj.clicked.connect(self.handle_single_obj_click)
+        self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)
+    def show_columns_for_bounds(self):
+        try:
+            # Clear existing widgets in the frameSearchSpace layout
+            for i in reversed(range(self.frameSearchSpace.layout().count())):
+                widget = self.frameSearchSpace.layout().itemAt(i).widget()
+                if widget:
+                    widget.deleteLater()
+
+            # Check if the DataFrame is loaded
+            if not hasattr(self, 'df') or self.df is None:
+                QtWidgets.QMessageBox.warning(None, "Warning", "No data loaded to display columns.")
+                return
+
+            # Get the column names
+            column_names = self.df.columns
+
+            # Loop through columns and create a row for each column
+            for column in column_names:
+                row_layout = QtWidgets.QHBoxLayout()
+
+                # Add column name label
+                column_label = QtWidgets.QLabel(column, self.frameSearchSpace)
+                column_label.setMinimumHeight(30)  # Set minimum height for the label
+                row_layout.addWidget(column_label)
+
+                # Create a frame for inputs (Lower Bound and Upper Bound)
+                input_frame = QtWidgets.QFrame(self.frameSearchSpace)
+                input_frame_layout = QtWidgets.QHBoxLayout(input_frame)
+                input_frame_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins
+                input_frame_layout.setSpacing(50)  # Spacing between inputs
+
+                # Add lower bound input to the frame
+                lower_bound_input = QtWidgets.QLineEdit(input_frame)
+                lower_bound_input.setPlaceholderText("Lower Bound")
+                lower_bound_input.setMinimumHeight(30)  # Set minimum height
+                input_frame_layout.addWidget(lower_bound_input)
+
+                # Add upper bound input to the frame
+                upper_bound_input = QtWidgets.QLineEdit(input_frame)
+                upper_bound_input.setPlaceholderText("Upper Bound")
+                upper_bound_input.setMinimumHeight(30)  # Set minimum height
+                input_frame_layout.addWidget(upper_bound_input)
+
+                # Align the input frame to the right
+                input_frame.setLayout(input_frame_layout)
+                row_layout.addWidget(input_frame, alignment=QtCore.Qt.AlignRight)
+
+                # Add the row to the frame's layout
+                self.frameSearchSpace.layout().addLayout(row_layout)
+
+        except AttributeError as ae:
+            QtWidgets.QMessageBox.critical(None, "Error", f"Attribute error occurred: {ae}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"An unexpected error occurred: {e}")
+
+    def handle_single_obj_click(self):
+        if not self.file_path:
+            # Show message box if file path does not exist
+            QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
+            return
+        # Show columns for bounds
+        self.show_columns_for_bounds()
+        self.stackedWidget.setCurrentIndex(4)
+
+
+    def handle_multi_obj_click(self):
+        if not self.file_path:
+            # Show message box if file path does not exist
+            QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
+            return
     def open_file_dialog(self):
         # Open file dialog to select a file
         file_dialog = QtWidgets.QFileDialog(self)
@@ -42,23 +118,27 @@ class MainScreen(QtWidgets.QMainWindow):
         try:
             # Determine file format
             if file_path.endswith('.csv'):
-                df = pd.read_csv(file_path)
+                self.df = pd.read_csv(file_path)
             elif file_path.endswith('.xlsx'):
-                df = pd.read_excel(file_path)
+                self.df = pd.read_excel(file_path)
             else:
                 raise ValueError("Unsupported file format")
 
-            self.dataTable.setRowCount(df.shape[0])
-            self.dataTable.setColumnCount(df.shape[1])
+            # Save the file path and enable the button
+            self.file_path = file_path
+            self.dataTable.setRowCount( self.df.shape[0])
+            self.dataTable.setColumnCount( self.df.shape[1])
 
             # Set headers
-            headers = df.columns.tolist()
+            headers =  self.df.columns.tolist()
             self.dataTable.setHorizontalHeaderLabels(headers)
 
             # Populate table with data
-            for row in range(df.shape[0]):
-                for col in range(df.shape[1]):
-                    self.dataTable.setItem(row, col, QtWidgets.QTableWidgetItem(str(df.iat[row, col])))
+            for row in range( self.df.shape[0]):
+                for col in range( self.df.shape[1]):
+                    item = QtWidgets.QTableWidgetItem(str(self.df.iat[row, col]))
+                    item.setTextAlignment(QtCore.Qt.AlignCenter)  # Center-align text
+                    self.dataTable.setItem(row, col, item)
 
         except ValueError as ve:
             QtWidgets.QMessageBox.critical(self, "Error", f"File format error: {ve}")
