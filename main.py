@@ -38,6 +38,8 @@ class MainScreen(QtWidgets.QMainWindow):
         self.btnSingleObj.clicked.connect(self.handle_single_obj_click)
         self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)
         self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)
+        self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)
+
     def get_qframe_in_layout(self,layout):
         item = layout.itemAt(1)
         if item:
@@ -113,6 +115,41 @@ class MainScreen(QtWidgets.QMainWindow):
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")        
         
+    def btnRunExperiment_click(self):
+        try:
+            # Check if the DataFrame is loaded
+            if not hasattr(self, 'df') or self.df is None:
+                QtWidgets.QMessageBox.warning(None, "Warning", "No data loaded to display columns.")
+                return
+            # Get the values from the input fields and combo box
+            batch_size = self.txtBatchSize.text().strip()
+            n_obj = self.txtNObj.text().strip()
+            n_var = self.txtNVar.text().strip()
+            target_column = self.cmbxTarget.currentText().strip()
+
+            # Check for null or empty values
+            if not batch_size or not n_obj or not n_var or not target_column:
+                QtWidgets.QMessageBox.warning(None, "Warning", "Please fill all fields before running the experiment.")
+                return
+
+            # Convert numeric inputs to integers if possible
+            try:
+                batch_size = int(batch_size)
+                n_obj = int(n_obj)
+                n_var = int(n_var)
+            except ValueError:
+                QtWidgets.QMessageBox.critical(None, "Error", "Invalid numeric input. Please enter valid integers.")
+                return
+
+            # Now you can use these values for your experiment logic
+            # For example:
+            print(f"Batch Size: {batch_size}, N Objectives: {n_obj}, N Variables: {n_var}, Target Column: {target_column}")
+
+            # Proceed with experiment logic here...
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
+
     def show_columns_for_bounds(self):
         try:
            # Clear existing layouts (if any)

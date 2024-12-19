@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -2172,6 +2172,9 @@ border-radius:5px;
                  </item>
                  <item alignment="Qt::AlignRight">
                   <widget class="QPushButton" name="btnRunExperiment">
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton {
     color: white;                      /* Text color */
