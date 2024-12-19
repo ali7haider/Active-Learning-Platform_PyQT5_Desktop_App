@@ -2342,6 +2342,9 @@ font-weight:bold;</string>
                             <property name="rowCount">
                              <number>0</number>
                             </property>
+                            <property name="columnCount">
+                             <number>1</number>
+                            </property>
                             <attribute name="horizontalHeaderCascadingSectionResizes">
                              <bool>false</bool>
                             </attribute>
@@ -2360,21 +2363,6 @@ font-weight:bold;</string>
                             <column>
                              <property name="text">
                               <string>Column1</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Column2</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Column3</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
-                              <string>Column4</string>
                              </property>
                             </column>
                            </widget>

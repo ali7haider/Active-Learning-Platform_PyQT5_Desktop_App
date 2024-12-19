@@ -145,6 +145,10 @@ class MainScreen(QtWidgets.QMainWindow):
             except ValueError:
                 QtWidgets.QMessageBox.critical(None, "Error", "Invalid numeric input. Please enter valid integers.")
                 return
+            self.lblLoading.setText("Loading...Please Wait")
+            # Show the DataFrame in the table
+            self.resultTable.setRowCount(0)  # Set rows
+            self.resultTable.setColumnCount(1)  # Set columns
             self.stackedWidget.setCurrentIndex(6)           
             # Start the experiment in a separate thread
             self.experiment_thread = ExperimentThread(batch_size, n_obj, n_var, target_column, self.df, self.column_bounds)
