@@ -154,10 +154,37 @@ class MainScreen(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
     def handle_experiment_result(self, result):
-        if isinstance(result, pd.DataFrame):
-            print('Result',result)  # Update UI or display results here
-        else:
-            QtWidgets.QMessageBox.critical(None, "Error", result)
+        try:
+            if isinstance(result, pd.DataFrame):
+                # Update the label
+                self.lblLoading.setText("Data shown successfully")
+
+                # Show the DataFrame in the table
+                self.resultTable.setRowCount(result.shape[0])  # Set rows
+                self.resultTable.setColumnCount(result.shape[1])  # Set columns
+                self.resultTable.setHorizontalHeaderLabels(result.columns)  # Set column headers
+
+                # Populate the table with DataFrame values
+                for row in range(result.shape[0]):
+                    for col in range(result.shape[1]):
+                        item = QtWidgets.QTableWidgetItem(str(result.iat[row, col]))
+                        item.setTextAlignment(QtCore.Qt.AlignCenter)  # Center-align text
+                        self.resultTable.setItem(row, col, item)
+
+                # Resize the table columns to fit contents
+                self.resultTable.resizeColumnsToContents()
+                self.resultTable.resizeRowsToContents()
+                self.resultTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
+            else:
+                # Show error message if result is not a DataFrame
+                QtWidgets.QMessageBox.critical(None, "Error", result)
+
+        except Exception as e:
+            # Handle unexpected errors
+            QtWidgets.QMessageBox.critical(None, "Critical Error", f"An error occurred while displaying results: {e}")
+
+
     
     def show_columns_for_bounds(self):
         try:
@@ -228,9 +255,13 @@ class MainScreen(QtWidgets.QMainWindow):
             # Show message box if file path does not exist
             QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
             return
+        # Disable the txtNObj field and set its text to "1"
+        self.txtNObj.setText("1")
+        self.txtNObj.setDisabled(True)
         # Show columns for bounds
         self.show_columns_for_bounds()
         self.stackedWidget.setCurrentIndex(4)
+
     
 
     def handle_multi_obj_click(self):
