@@ -10,6 +10,9 @@ import threading
 import json     
 import os
 from objective_files.single_objective_code_func import run_optimization
+from datetime import datetime
+import csv
+
 class MainScreen(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainScreen, self).__init__()
@@ -44,6 +47,8 @@ class MainScreen(QtWidgets.QMainWindow):
         self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)  # Handle multi-objective button click
         self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)  # Collect column bounds
         self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)  # Run the experiment
+        self.btnDownload.clicked.connect(self.btnDownload_click)
+
 
     def get_qframe_in_layout(self,layout):
         item = layout.itemAt(1)
@@ -189,6 +194,46 @@ class MainScreen(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(None, "Critical Error", f"An error occurred while displaying results: {e}")
 
 
+    def btnDownload_click(self):
+        try:
+            # Get current datetime for the file name
+            current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            file_name = f"results_{current_time}.csv"
+
+            # Open a file dialog to select the save location
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                None,
+                "Save Results",
+                file_name,
+                "CSV Files (*.csv)"
+            )
+
+            if not file_path:  # If no file is selected, return
+                return
+
+            # Open the file for writing
+            with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+
+                # Write the headers
+                headers = [self.resultTable.horizontalHeaderItem(i).text() for i in range(self.resultTable.columnCount())]
+                writer.writerow(headers)
+
+                # Write table rows
+                for row in range(self.resultTable.rowCount()):
+                    row_data = [
+                        self.resultTable.item(row, col).text() if self.resultTable.item(row, col) else ""
+                        for col in range(self.resultTable.columnCount())
+                    ]
+                    writer.writerow(row_data)
+
+            # Show success message
+            QtWidgets.QMessageBox.information(None, "Success", f"Results saved successfully as {file_name}.")
+
+        except Exception as e:
+            # Show error message in case of failure
+            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to save results: {e}")
+    
     
     def show_columns_for_bounds(self):
         try:

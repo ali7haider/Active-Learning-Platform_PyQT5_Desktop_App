@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -2199,8 +2199,8 @@ color:black;
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>920</width>
-                            <height>563</height>
+                            <width>382</width>
+                            <height>76</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2414,7 +2414,7 @@ border-radius:5px;
                     <item row="3" column="0">
                      <widget class="QLabel" name="label_15">
                       <property name="text">
-                       <string>Target (i.e What want to optimize):</string>
+                       <string>Target (i.e Objective functions):</string>
                       </property>
                      </widget>
                     </item>
@@ -2620,6 +2620,28 @@ font-weight:bold;</string>
                             </property>
                            </widget>
                           </item>
+                          <item alignment="Qt::AlignRight">
+                           <widget class="QPushButton" name="btnDownload">
+                            <property name="cursor">
+                             <cursorShape>PointingHandCursor</cursorShape>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QPushButton {
+    color: white;                      /* Text color */
+    padding: 6px 12px;                 /* Padding inside button */
+    font-weight: bold;                 /* Bold text */
+	background-color:#068fff;
+	font:  12pt &quot;Calibri&quot;;
+    border-radius: 6px;                /* Rounded corners */
+
+
+}</string>
+                            </property>
+                            <property name="text">
+                             <string>Download</string>
+                            </property>
+                           </widget>
+                          </item>
                           <item>
                            <widget class="QTableWidget" name="resultTable">
                             <property name="editTriggers">
@@ -2650,7 +2672,7 @@ font-weight:bold;</string>
                              <bool>true</bool>
                             </attribute>
                             <attribute name="verticalHeaderVisible">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </attribute>
                             <attribute name="verticalHeaderCascadingSectionResizes">
                              <bool>false</bool>
