@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -2199,8 +2199,8 @@ color:black;
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>382</width>
-                            <height>76</height>
+                            <width>951</width>
+                            <height>543</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -2672,7 +2672,7 @@ font-weight:bold;</string>
                              <bool>true</bool>
                             </attribute>
                             <attribute name="verticalHeaderVisible">
-                             <bool>true</bool>
+                             <bool>false</bool>
                             </attribute>
                             <attribute name="verticalHeaderCascadingSectionResizes">
                              <bool>false</bool>
@@ -2745,6 +2745,188 @@ font: 75 20pt &quot;Calibri&quot;;</string>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="targetPage">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+	font:  12pt &quot;Calibri&quot;;
+color:black;
+}</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_45">
+              <item>
+               <widget class="QFrame" name="frame_40">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_40">
+                 <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+                  <widget class="QFrame" name="frame_41">
+                   <property name="minimumSize">
+                    <size>
+                     <width>350</width>
+                     <height>300</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#frame_23 {
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
+}
+
+#frame_24 {
+    border-left: 2px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
+}
+
+#frame_25 {
+    border-left: 2px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
+    border-bottom: 2px solid #f2f2f2;
+}
+</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_41">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>100</number>
+                    </property>
+                    <item>
+                     <widget class="QFrame" name="frame_42">
+                      <property name="styleSheet">
+                       <string notr="true">background-color: #279eff;
+border-top-left-radius: 10px; /* Rounded top-left corner */
+border-top-right-radius: 10px; /* Rounded top-right corner */
+</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_42">
+                       <item>
+                        <widget class="QLabel" name="label_36">
+                         <property name="styleSheet">
+                          <string notr="true">QLabel{
+	font:  12pt &quot;Calibri&quot;;
+	font: 75 14pt &quot;Calibri&quot;;
+font-weight:bold;
+color:#fff;
+
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>Optimization Guide</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_43">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_44">
+                       <item>
+                        <widget class="QLabel" name="label_37">
+                         <property name="text">
+                          <string>How many target variable 
+Two or Three?</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_44">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_10">
+                       <item>
+                        <widget class="QPushButton" name="btnTargetTwo">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">
+QPushButton {
+    color: white;                      /* Text color */
+    border-radius: 5px;                /* Rounded corners */
+    padding: 6px 12px;                 /* Padding inside button */
+    font-weight: bold;                 /* Bold text */
+background-color:#f2f2f2;
+	font:  12pt &quot;Calibri&quot;;
+color:#515151;
+
+
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>Two</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="btnTargetThree">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QPushButton {
+    color: white;                      /* Text color */
+    padding: 6px 12px;                 /* Padding inside button */
+    font-weight: bold;                 /* Bold text */
+	background-color:#068fff;
+	font:  12pt &quot;Calibri&quot;;
+	border-radius:5px;
+
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>Three</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
