@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -3160,7 +3160,7 @@ color:black;
                         </widget>
                        </item>
                        <item alignment="Qt::AlignRight">
-                        <widget class="QPushButton" name="btnSubmitSingleObj_2">
+                        <widget class="QPushButton" name="btnSubmitMultiObj">
                          <property name="minimumSize">
                           <size>
                            <width>120</width>
@@ -3251,6 +3251,19 @@ border-radius:5px;
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_6">
+                    <property name="verticalSpacing">
+                     <number>12</number>
+                    </property>
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="txtBatchSizeMulti">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_42">
                       <property name="text">
@@ -3258,8 +3271,15 @@ border-radius:5px;
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="1">
-                     <widget class="QLineEdit" name="txtBatchSizeMulti">
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_45">
+                      <property name="text">
+                       <string>N_Var</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="txtNVarMulti">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -3285,7 +3305,7 @@ border-radius:5px;
                       <x>0</x>
                       <y>0</y>
                       <width>955</width>
-                      <height>538</height>
+                      <height>498</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -3426,47 +3446,6 @@ border-radius:5px;
                                  <property name="verticalSpacing">
                                   <number>20</number>
                                  </property>
-                                 <item row="0" column="3" alignment="Qt::AlignRight">
-                                  <widget class="QLabel" name="lblReference1">
-                                   <property name="minimumSize">
-                                    <size>
-                                     <width>30</width>
-                                     <height>0</height>
-                                    </size>
-                                   </property>
-                                   <property name="styleSheet">
-                                    <string notr="true">border:1px solid black;</string>
-                                   </property>
-                                   <property name="text">
-                                    <string>0</string>
-                                   </property>
-                                   <property name="alignment">
-                                    <set>Qt::AlignCenter</set>
-                                   </property>
-                                  </widget>
-                                 </item>
-                                 <item row="0" column="2">
-                                  <widget class="QComboBox" name="cmbxTarget1"/>
-                                 </item>
-                                 <item row="1" column="3" alignment="Qt::AlignRight">
-                                  <widget class="QLabel" name="lblReference2">
-                                   <property name="minimumSize">
-                                    <size>
-                                     <width>30</width>
-                                     <height>0</height>
-                                    </size>
-                                   </property>
-                                   <property name="styleSheet">
-                                    <string notr="true">border:1px solid black;</string>
-                                   </property>
-                                   <property name="text">
-                                    <string>0</string>
-                                   </property>
-                                   <property name="alignment">
-                                    <set>Qt::AlignCenter</set>
-                                   </property>
-                                  </widget>
-                                 </item>
                                  <item row="0" column="1">
                                   <widget class="QLabel" name="lblTarget1">
                                    <property name="text">
@@ -3481,35 +3460,79 @@ border-radius:5px;
                                    </property>
                                   </widget>
                                  </item>
-                                 <item row="1" column="2">
-                                  <widget class="QComboBox" name="cmbxTarget2"/>
-                                 </item>
-                                 <item row="2" column="3" alignment="Qt::AlignRight">
-                                  <widget class="QLabel" name="lblReference3">
-                                   <property name="minimumSize">
+                                 <item row="0" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget1">
+                                   <property name="maximumSize">
                                     <size>
-                                     <width>30</width>
-                                     <height>0</height>
+                                     <width>16777215</width>
+                                     <height>30</height>
                                     </size>
                                    </property>
-                                   <property name="styleSheet">
-                                    <string notr="true">border:1px solid black;</string>
+                                  </widget>
+                                 </item>
+                                 <item row="1" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget2">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>16777215</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="1" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLineEdit" name="txtReference2">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>35</width>
+                                     <height>16777215</height>
+                                    </size>
                                    </property>
                                    <property name="text">
                                     <string>0</string>
                                    </property>
-                                   <property name="alignment">
-                                    <set>Qt::AlignCenter</set>
+                                  </widget>
+                                 </item>
+                                 <item row="0" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLineEdit" name="txtReference1">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>35</width>
+                                     <height>16777215</height>
+                                    </size>
+                                   </property>
+                                   <property name="text">
+                                    <string>0</string>
                                    </property>
                                   </widget>
                                  </item>
-                                 <item row="2" column="2">
-                                  <widget class="QComboBox" name="cmbxTarget3"/>
+                                 <item row="2" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLineEdit" name="txtReference3">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>35</width>
+                                     <height>16777215</height>
+                                    </size>
+                                   </property>
+                                   <property name="text">
+                                    <string>0</string>
+                                   </property>
+                                  </widget>
                                  </item>
                                  <item row="2" column="1">
                                   <widget class="QLabel" name="lblTarget3">
                                    <property name="text">
                                     <string>Target (3)</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="2" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget3">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>16777215</width>
+                                     <height>30</height>
+                                    </size>
                                    </property>
                                   </widget>
                                  </item>

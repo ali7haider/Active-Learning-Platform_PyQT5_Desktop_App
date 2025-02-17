@@ -10,6 +10,9 @@ import threading
 import json     
 import os
 from objective_files.single_objective_code_func import run_optimization
+from objective_files.multi_objective_code_two_func import  run_multi_objective_optimization_two
+from objective_files.multi_objective_code_three_func import run_multi_objective_optimization_three, run_multi_objective_optimization_two
+
 from datetime import datetime
 import csv
 
@@ -45,11 +48,16 @@ class MainScreen(QtWidgets.QMainWindow):
         # Connect buttons to their handlers
         self.btnSingleObj.clicked.connect(self.handle_single_obj_click)  # Handle single objective button click
         self.btnMultiObj.clicked.connect(self.handle_multi_obj_click)  # Handle multi-objective button click
-        self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)  # Collect column bounds
         self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)  # Run the experiment
+
+        self.btnRunExperimentMultiObj.clicked.connect(self.btnRunMultiObjExperiment_click)  # Run the experiment
         self.btnDownload.clicked.connect(self.btnDownload_click)
         self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
         self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
+
+        self.btnSubmitSingleObj.clicked.connect(lambda: self.collect_column_bounds(self.frameSearchSpace))
+        self.btnSubmitMultiObj.clicked.connect(lambda: self.collect_column_bounds(self.frameSearchSpace_2))
+
 
     def handle_multi_obj_click(self):
         if not self.file_path:
@@ -64,16 +72,87 @@ class MainScreen(QtWidgets.QMainWindow):
         # self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
         # self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
 
+    def btnRunMultiObjExperiment_click(self):
+        try:
+            # Check if the DataFrame is loaded
+            if not hasattr(self, 'df') or self.df is None:
+                QtWidgets.QMessageBox.warning(None, "Warning", "No data loaded to display columns.")
+                return
+
+            # Get input values
+            batch_size = self.txtBatchSizeMulti.text().strip()
+            n_var = self.txtNVarMulti.text().strip()
+            target1 = self.cmbxTarget1.currentText().strip()
+            ref1 = self.txtReference1.text().strip()
+            target2 = self.cmbxTarget2.currentText().strip()
+            ref2 = self.txtReference2.text().strip()
+
+            # Ensure mandatory fields are filled
+            if not batch_size or not n_var or not target1 or not ref1 or not target2 or not ref2:
+                QtWidgets.QMessageBox.warning(None, "Warning", "Please fill all required fields before running the experiment.")
+                return
+
+            # Convert batch size & variable count to integers
+            try:
+                batch_size = int(batch_size)
+                n_var = int(n_var)
+            except ValueError:
+                QtWidgets.QMessageBox.critical(None, "Error", "Invalid numeric input. Please enter valid integers.")
+                return
+
+            # Store mandatory targets
+            targets = [(target1, ref1), (target2, ref2)]
+
+            # Check third target (optional) - included only if ref3 is a valid number and visible
+            if self.cmbxTarget3.isVisible() and self.txtReference3.isVisible():
+                target3 = self.cmbxTarget3.currentText().strip()
+                ref3 = self.txtReference3.text().strip()
+                try:
+                    if ref3:  # If ref3 is not empty, check if it's a valid number
+                        float(ref3)  # Validate number
+                        targets.append((target3, ref3))
+                except ValueError:
+                    pass  # Ignore target3 if ref3 is invalid
+
+            # Show loading message
+            self.lblLoading_2.setText("Loading... Please Wait")
+
+            # Update UI: Reset results table & change stack widget page
+            self.resultTable_2.setRowCount(0)
+            self.resultTable_2.setColumnCount(len(targets))
+            self.stackedWidget.setCurrentIndex(11)
+            print(targets)
+            # Start experiment in a separate thread
+            # self.experiment_thread = MultiObjExperimentThread(batch_size, n_var, targets, self.df, self.column_bounds)
+            # self.experiment_thread.finished.connect(self.handle_experiment_result)
+            # self.experiment_thread.start()
+            experiment_thread = MultiObjExperimentThread(
+            batch_size=batch_size,
+            n_var=n_var,
+            target_columns=targets,
+            df=self.df,
+            column_bounds=self.column_bounds
+        )
+        
+            # Connect the finished signal to a handler
+            experiment_thread.finished.connect(self.handle_experiment_result_multi)  # Make sure to define this function
+            experiment_thread.start()
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
+
+
     def update_target_visibility(self, target_count):
         if target_count == 2:
             self.lblTarget3.hide()
             self.cmbxTarget3.hide()
-            self.lblReference3.hide()
+            self.txtReference3.hide()
         elif target_count == 3:
             self.lblTarget3.show()
             self.cmbxTarget3.show()
-            self.lblReference3.show()
+            self.txtReference3.show()
 
+        self.show_columns_for_bounds(self.frameSearchSpace_2)
         self.stackedWidget.setCurrentIndex(9)  # Move to page 9 after selection
 
     def get_qframe_in_layout(self,layout):
@@ -95,46 +174,58 @@ class MainScreen(QtWidgets.QMainWindow):
                     break
 
         return line_edits[0] if line_edits else None, line_edits[1] if len(line_edits) > 1 else None
-    def collect_column_bounds(self):
+    def collect_column_bounds(self, frame):
         try:
             # Dictionary to store column bounds
             bounds_dict = {}
 
-            # Loop through each row in the frameSearchSpace layout
-            layout_count = self.frameSearchSpace.layout().count()
+            # Ensure the frame has a layout
+            if frame.layout() is None:
+                QtWidgets.QMessageBox.warning(None, "Warning", "No layout found in the frame.")
+                return
+
+            # Loop through each row in the provided frame layout
+            layout_count = frame.layout().count()
             for i in range(layout_count):
-                layout = self.frameSearchSpace.layout().itemAt(i).layout()
-                
-                if layout is not None:  # Ensure layout is not None
+                layout = frame.layout().itemAt(i).layout()
+
+                if layout is not None:  # Ensure layout exists
                     # Get column name from label widget
-                    if isinstance(layout, QLayout):
-                        input_frame_layout = self.get_qframe_in_layout(layout)
                     column_label_widget = layout.itemAt(0).widget()
                     column_name = column_label_widget.text() if column_label_widget else None
 
-                    # Check if the layout contains the input frame (itemAt(1))
-                    if input_frame_layout:
-                        # Get lower bound input widget from the layout
-                        first_line_edit, second_line_edit = self.get_first_two_line_edits_from_frame(input_frame_layout)
-                        lower_bound = first_line_edit.text() if first_line_edit.text() else 0
-                        upper_bound = second_line_edit.text() if second_line_edit.text() else 0 
+                    # Get the input frame layout (itemAt(1) should contain the input fields)
+                    input_frame = layout.itemAt(1).widget() if layout.count() > 1 else None
+                    if input_frame and isinstance(input_frame, QtWidgets.QFrame):
+                        input_frame_layout = input_frame.layout()
 
-                        # Save column name and its bounds into the dictionary
-                        if column_name:
-                            bounds_dict[column_name] = {'lower': lower_bound, 'upper': upper_bound}
+                        # Retrieve lower and upper bound input fields
+                        if input_frame_layout:
+                            first_line_edit, second_line_edit = self.get_first_two_line_edits_from_frame(input_frame_layout)
+                            lower_bound = first_line_edit.text() if first_line_edit and first_line_edit.text() else "0"
+                            upper_bound = second_line_edit.text() if second_line_edit and second_line_edit.text() else "0"
+
+                            # Save column name and its bounds into the dictionary
+                            if column_name:
+                                bounds_dict[column_name] = {'lower': lower_bound, 'upper': upper_bound}
                     else:
-                        print(f"Input frame layout at index {i} is None.")
+                        print(f"Input frame layout at index {i} is missing.")
+
             self.column_bounds = bounds_dict
             # Change stack widget page after collecting column bounds
-            self.change_stack_widget_page_and_fill_combo()
+            if frame == self.frameSearchSpace:
+                self.change_stack_widget_page_and_fill_combo(5)
+            elif frame == self.frameSearchSpace_2:
+                self.change_stack_widget_page_and_fill_combo(10)
+
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
 
 
-    def change_stack_widget_page_and_fill_combo(self):
+    def change_stack_widget_page_and_fill_combo(self,index):
         try:
             # Change the stack widget to the desired page (assuming page 5)
-            self.stackedWidget.setCurrentIndex(5)
+            self.stackedWidget.setCurrentIndex(index)
 
             # Check if the DataFrame is loaded
             if not hasattr(self, 'df') or self.df is None:
@@ -147,6 +238,12 @@ class MainScreen(QtWidgets.QMainWindow):
             # Fill the combo box with these column names
             self.cmbxTarget.clear()  # Clear existing items first
             self.cmbxTarget.addItems(column_names)
+            self.cmbxTarget1.clear()
+            self.cmbxTarget1.addItems(column_names)
+            self.cmbxTarget2.clear()
+            self.cmbxTarget2.addItems(column_names)
+            self.cmbxTarget3.clear()
+            self.cmbxTarget3.addItems(column_names)
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")        
@@ -219,6 +316,37 @@ class MainScreen(QtWidgets.QMainWindow):
             # Handle unexpected errors
             QtWidgets.QMessageBox.critical(None, "Critical Error", f"An error occurred while displaying results: {e}")
 
+    def handle_experiment_result_multi(self, result):
+        try:
+            if isinstance(result, pd.DataFrame):
+                # Update the label
+                self.lblLoading_2.setText("Data shown successfully")
+
+                # Show the DataFrame in the table
+                self.resultTable_2.setRowCount(result.shape[0])  # Set rows
+                self.resultTable_2.setColumnCount(result.shape[1])  # Set columns
+                self.resultTable_2.setHorizontalHeaderLabels(result.columns)  # Set column headers
+
+                # Populate the table with DataFrame values
+                for row in range(result.shape[0]):
+                    for col in range(result.shape[1]):
+                        item = QtWidgets.QTableWidgetItem(str(result.iat[row, col]))
+                        item.setTextAlignment(QtCore.Qt.AlignCenter)  # Center-align text
+                        self.resultTable_2.setItem(row, col, item)
+
+                # Resize the table columns to fit contents
+                self.resultTable_2.resizeColumnsToContents()
+                self.resultTable_2.resizeRowsToContents()
+                self.resultTable_2.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
+            else:
+                # Show error message if result is not a DataFrame
+                QtWidgets.QMessageBox.critical(None, "Error", result)
+
+        except Exception as e:
+            # Handle unexpected errors
+            QtWidgets.QMessageBox.critical(None, "Critical Error", f"An error occurred while displaying results: {e}")
+
 
     def btnDownload_click(self):
         try:
@@ -261,21 +389,22 @@ class MainScreen(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to save results: {e}")
     
     
-    def show_columns_for_bounds(self):
+    def show_columns_for_bounds(self, frame):
         try:
-           # Clear existing layouts (if any)
-            while self.frameSearchSpace.layout().count() > 0:
-                item = self.frameSearchSpace.layout().takeAt(0)
-                if item.layout():
-                    if isinstance(item, QLayout): 
-                        # Remove input_frame_layout if it exists
-                        input_frame_layout = self.get_qframe_in_layout(item) 
-                        if input_frame_layout:
-                            input_frame_layout.deleteLater() 
-                    column_label_widget = item.itemAt(0).widget()
-                    column_label_widget.deleteLater() 
-            # Update the frame to reflect the changes
-            self.frameSearchSpace.update() 
+            # Ensure the frame has a layout
+            if frame.layout() is None:
+                frame.setLayout(QtWidgets.QVBoxLayout())
+
+            # Clear existing layouts (if any)
+            while frame.layout().count() > 0:
+                item = frame.layout().takeAt(0)
+                if item:
+                    widget = item.widget()
+                    if widget:
+                        widget.deleteLater()
+
+            # Update the frame to reflect changes
+            frame.update()
 
             # Check if the DataFrame is loaded
             if not hasattr(self, 'df') or self.df is None:
@@ -290,39 +419,40 @@ class MainScreen(QtWidgets.QMainWindow):
                 row_layout = QtWidgets.QHBoxLayout()
 
                 # Add column name label
-                column_label = QtWidgets.QLabel(column, self.frameSearchSpace)
-                column_label.setMinimumHeight(30)  # Set minimum height for the label
+                column_label = QtWidgets.QLabel(column, frame)
+                column_label.setMinimumHeight(30)
                 row_layout.addWidget(column_label)
 
                 # Create a frame for inputs (Lower Bound and Upper Bound)
-                input_frame = QtWidgets.QFrame(self.frameSearchSpace)
+                input_frame = QtWidgets.QFrame(frame)
                 input_frame_layout = QtWidgets.QHBoxLayout(input_frame)
-                input_frame_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins
-                input_frame_layout.setSpacing(50)  # Spacing between inputs
+                input_frame_layout.setContentsMargins(0, 0, 0, 0)
+                input_frame_layout.setSpacing(50)
 
-                # Add lower bound input to the frame
+                # Add lower bound input
                 lower_bound_input = QtWidgets.QLineEdit(input_frame)
                 lower_bound_input.setPlaceholderText("Lower Bound")
-                lower_bound_input.setMinimumHeight(30)  # Set minimum height
+                lower_bound_input.setMinimumHeight(30)
                 input_frame_layout.addWidget(lower_bound_input)
 
-                # Add upper bound input to the frame
+                # Add upper bound input
                 upper_bound_input = QtWidgets.QLineEdit(input_frame)
                 upper_bound_input.setPlaceholderText("Upper Bound")
-                upper_bound_input.setMinimumHeight(30)  # Set minimum height
+                upper_bound_input.setMinimumHeight(30)
                 input_frame_layout.addWidget(upper_bound_input)
 
-                # Align the input frame to the right
+                # Align input frame to the right
                 input_frame.setLayout(input_frame_layout)
                 row_layout.addWidget(input_frame, alignment=QtCore.Qt.AlignRight)
 
-                # Add the row to the frame's layout
-                self.frameSearchSpace.layout().addLayout(row_layout)
+                # Add the row layout to the main frame's layout
+                frame.layout().addLayout(row_layout)
 
         except AttributeError as ae:
             QtWidgets.QMessageBox.critical(None, "Error", f"Attribute error occurred: {ae}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An unexpected error occurred: {e}")
+
 
 
     def handle_single_obj_click(self):
@@ -334,7 +464,7 @@ class MainScreen(QtWidgets.QMainWindow):
         self.txtNObj.setText("1")
         self.txtNObj.setDisabled(True)
         # Show columns for bounds
-        self.show_columns_for_bounds()
+        self.show_columns_for_bounds(self.frameSearchSpace)
         self.stackedWidget.setCurrentIndex(4)
 
     
@@ -480,7 +610,67 @@ class ExperimentThread(QtCore.QThread):
             return df_candidates
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
+class MultiObjExperimentThread(QtCore.QThread):
+    finished = QtCore.pyqtSignal(object)  # Signal to emit the result
 
+    def __init__(self, batch_size, n_var, target_columns, df, column_bounds):
+        super().__init__()
+        self.batch_size = batch_size
+        self.n_var = n_var
+        self.target_columns = target_columns  # List of target columns for multi-objective
+        self.df = df
+        self.column_bounds = column_bounds
+
+    def run(self):
+        try:
+            # Run the experiment in the background
+            result = self.run_experiment(
+                self.batch_size, self.n_var, self.target_columns, self.df, self.column_bounds
+            )
+            self.finished.emit(result)  # Emit the result when done
+        except Exception as e:
+            self.finished.emit(f"Error: {str(e)}")
+
+    def run_experiment(self, batch_size, n_var, target_columns, df, column_bounds):
+        try:
+            # Parse the column bounds into lower and upper bounds, excluding target columns
+            lower_bounds = [column_bounds[col]['lower'] for col in column_bounds.keys() if col not in target_columns]
+            upper_bounds = [column_bounds[col]['upper'] for col in column_bounds.keys() if col not in target_columns]
+            # Ensure bounds are numeric
+            lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
+            upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
+
+            # Check if the target columns are in the DataFrame
+            if not all(target_column in df.columns for target_column in target_columns):
+                raise ValueError(f"One or more target columns are missing in the DataFrame.")
+
+            # Call the optimization function based on the number of objectives (depends on length of target_columns)
+            n_obj = len(target_columns)
+            
+            if n_obj == 2:
+                df_candidates = run_multi_objective_optimization_two(
+                    df=df,
+                    lower_bounds=lower_bounds,
+                    upper_bounds=upper_bounds,
+                    n_var=n_var,
+                    target_columns=target_columns,    
+                    batch_size=batch_size
+                )
+            elif n_obj == 3:
+                df_candidates = run_multi_objective_optimization_three(
+                    df=df,
+                    lower_bounds=lower_bounds,
+                    upper_bounds=upper_bounds,
+                    n_var=n_var,
+                    target_columns=target_columns,    
+                    batch_size=batch_size
+                )
+            else:
+                raise ValueError("Currently only supports 2 or 3 objectives for multi-objective optimization.")
+
+            return df_candidates
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
 
 # Main application
 app = QtWidgets.QApplication(sys.argv)

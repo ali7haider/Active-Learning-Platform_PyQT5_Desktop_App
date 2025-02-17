@@ -61,7 +61,6 @@ from botorch.acquisition.multi_objective.logei import qLogNoisyExpectedHypervolu
 from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
 
 # LHS
-from pyDOE import lhs
 
 # Warnings
 import warnings
