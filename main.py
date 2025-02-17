@@ -48,7 +48,33 @@ class MainScreen(QtWidgets.QMainWindow):
         self.btnSubmitSingleObj.clicked.connect(self.collect_column_bounds)  # Collect column bounds
         self.btnRunExperiment.clicked.connect(self.btnRunExperiment_click)  # Run the experiment
         self.btnDownload.clicked.connect(self.btnDownload_click)
+        self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
+        self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
 
+    def handle_multi_obj_click(self):
+        if not self.file_path:
+            # Show message box if file path does not exist
+            QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
+            return
+        
+        print("Multi-objective optimization selected.")
+        # change the stack widget page to 4 
+        self.stackedWidget.setCurrentIndex(8)
+        # # Connect buttons to update target visibility
+        # self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
+        # self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
+
+    def update_target_visibility(self, target_count):
+        if target_count == 2:
+            self.lblTarget3.hide()
+            self.cmbxTarget3.hide()
+            self.lblReference3.hide()
+        elif target_count == 3:
+            self.lblTarget3.show()
+            self.cmbxTarget3.show()
+            self.lblReference3.show()
+
+        self.stackedWidget.setCurrentIndex(9)  # Move to page 9 after selection
 
     def get_qframe_in_layout(self,layout):
         item = layout.itemAt(1)
@@ -313,11 +339,7 @@ class MainScreen(QtWidgets.QMainWindow):
 
     
 
-    def handle_multi_obj_click(self):
-        if not self.file_path:
-            # Show message box if file path does not exist
-            QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
-            return
+    
     def open_file_dialog(self):
         # Open file dialog to select a file
         file_dialog = QtWidgets.QFileDialog(self)

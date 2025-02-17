@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1225</width>
-    <height>745</height>
+    <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -733,7 +733,7 @@ QPushButton:pressed {
              <string notr="true">background-color:white;</string>
             </property>
             <property name="currentIndex">
-             <number>11</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="homePage">
              <property name="styleSheet">
@@ -2200,7 +2200,7 @@ color:black;
                             <x>0</x>
                             <y>0</y>
                             <width>951</width>
-                            <height>543</height>
+                            <height>528</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -3057,7 +3057,7 @@ color:black;
                             <x>0</x>
                             <y>0</y>
                             <width>929</width>
-                            <height>521</height>
+                            <height>506</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_51">
@@ -3217,27 +3217,6 @@ color:black;
                  <property name="bottomMargin">
                   <number>20</number>
                  </property>
-                 <item alignment="Qt::AlignRight">
-                  <widget class="QPushButton" name="btnRunExperiment_2">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">QPushButton {
-    color: white;                      /* Text color */
-    padding: 6px 12px;                 /* Padding inside button */
-    font-weight: bold;                 /* Bold text */
-	background-color:#068fff;
-	font:  12pt &quot;Calibri&quot;;
-	border-radius:5px;
-
-}</string>
-                   </property>
-                   <property name="text">
-                    <string>Run Experiment</string>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
               </item>
@@ -3280,7 +3259,7 @@ border-radius:5px;
                      </widget>
                     </item>
                     <item row="0" column="1">
-                     <widget class="QLineEdit" name="txtBatchSize_2">
+                     <widget class="QLineEdit" name="txtBatchSizeMulti">
                       <property name="maximumSize">
                        <size>
                         <width>16777215</width>
@@ -3306,7 +3285,7 @@ border-radius:5px;
                       <x>0</x>
                       <y>0</y>
                       <width>955</width>
-                      <height>517</height>
+                      <height>538</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -3398,7 +3377,149 @@ border-radius:5px;
                           <property name="frameShadow">
                            <enum>QFrame::Raised</enum>
                           </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_59"/>
+                          <layout class="QVBoxLayout" name="verticalLayout_59">
+                           <property name="leftMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="topMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="rightMargin">
+                            <number>0</number>
+                           </property>
+                           <property name="bottomMargin">
+                            <number>0</number>
+                           </property>
+                           <item>
+                            <widget class="QFrame" name="frame_60">
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QVBoxLayout" name="verticalLayout_67">
+                              <property name="leftMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignTop">
+                               <widget class="QFrame" name="frame_61">
+                                <property name="frameShape">
+                                 <enum>QFrame::StyledPanel</enum>
+                                </property>
+                                <property name="frameShadow">
+                                 <enum>QFrame::Raised</enum>
+                                </property>
+                                <layout class="QGridLayout" name="gridLayout_7">
+                                 <property name="rightMargin">
+                                  <number>100</number>
+                                 </property>
+                                 <property name="verticalSpacing">
+                                  <number>20</number>
+                                 </property>
+                                 <item row="0" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLabel" name="lblReference1">
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>0</height>
+                                    </size>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">border:1px solid black;</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>0</string>
+                                   </property>
+                                   <property name="alignment">
+                                    <set>Qt::AlignCenter</set>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="0" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget1"/>
+                                 </item>
+                                 <item row="1" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLabel" name="lblReference2">
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>0</height>
+                                    </size>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">border:1px solid black;</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>0</string>
+                                   </property>
+                                   <property name="alignment">
+                                    <set>Qt::AlignCenter</set>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="0" column="1">
+                                  <widget class="QLabel" name="lblTarget1">
+                                   <property name="text">
+                                    <string>Target (1)</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="1" column="1">
+                                  <widget class="QLabel" name="lblTarget2">
+                                   <property name="text">
+                                    <string>Target (2)</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="1" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget2"/>
+                                 </item>
+                                 <item row="2" column="3" alignment="Qt::AlignRight">
+                                  <widget class="QLabel" name="lblReference3">
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>0</height>
+                                    </size>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">border:1px solid black;</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>0</string>
+                                   </property>
+                                   <property name="alignment">
+                                    <set>Qt::AlignCenter</set>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="2" column="2">
+                                  <widget class="QComboBox" name="cmbxTarget3"/>
+                                 </item>
+                                 <item row="2" column="1">
+                                  <widget class="QLabel" name="lblTarget3">
+                                   <property name="text">
+                                    <string>Target (3)</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                </layout>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                          </layout>
                          </widget>
                         </item>
                        </layout>
@@ -3409,7 +3530,7 @@ border-radius:5px;
                   </widget>
                  </item>
                  <item alignment="Qt::AlignRight">
-                  <widget class="QPushButton" name="btnSubmitSingleObj_3">
+                  <widget class="QPushButton" name="btnRunExperimentMultiObj">
                    <property name="minimumSize">
                     <size>
                      <width>120</width>
@@ -3431,7 +3552,7 @@ border-radius:5px;
 }</string>
                    </property>
                    <property name="text">
-                    <string>Submit</string>
+                    <string>Run Experiment</string>
                    </property>
                   </widget>
                  </item>
@@ -3612,7 +3733,7 @@ font-weight:bold;</string>
                           <bool>true</bool>
                          </attribute>
                          <attribute name="verticalHeaderVisible">
-                          <bool>true</bool>
+                          <bool>false</bool>
                          </attribute>
                          <attribute name="verticalHeaderCascadingSectionResizes">
                           <bool>false</bool>
