@@ -13,6 +13,7 @@ from objective_files.single_objective_code_func import run_optimization
 from objective_files.multi_objective_code_two_func import  run_multi_objective_optimization_two
 from objective_files.multi_objective_code_three_func import run_multi_objective_optimization_three
 from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtGui import QIntValidator
 
 from datetime import datetime
 import csv
@@ -42,7 +43,13 @@ class MainScreen(QtWidgets.QMainWindow):
         icon.addPixmap(QtGui.QPixmap(':/images/images/icons/icons8-home-30.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnHome.setIcon(icon)
         self.btnHome.setIconSize(QtCore.QSize(30, 30))
+        validator = QIntValidator(-1, 10000, self)  # Customize range as needed
 
+        for line_edit in [
+            self.txtBatchSize, self.txtNVar, self.txtBatchSizeMulti,
+            self.txtNVarMulti, self.txtReference1, self.txtReference2, self.txtReference3
+        ]:
+            line_edit.setValidator(validator)
         # Adjust column widths of the data table
         self.dataTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
@@ -70,9 +77,6 @@ class MainScreen(QtWidgets.QMainWindow):
         
         # change the stack widget page to 4 
         self.stackedWidget.setCurrentIndex(8)
-        # # Connect buttons to update target visibility
-        # self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
-        # self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
 
     def btnRunMultiObjExperiment_click(self):
         try:
@@ -438,17 +442,16 @@ class MainScreen(QtWidgets.QMainWindow):
     
     def show_columns_for_bounds(self, frame):
         try:
-            # Ensure the frame has a layout
-            if frame.layout() is None:
-                frame.setLayout(QtWidgets.QVBoxLayout())
-
             # Clear existing layouts (if any)
             while frame.layout().count() > 0:
                 item = frame.layout().takeAt(0)
-                if item:
-                    widget = item.widget()
-                    if widget:
-                        widget.deleteLater()
+                if item.layout():
+                    if isinstance(item, QLayout): 
+                        input_frame_layout = self.get_qframe_in_layout(item) 
+                        if input_frame_layout:
+                            input_frame_layout.deleteLater() 
+                    column_label_widget = item.itemAt(0).widget()
+                    column_label_widget.deleteLater() 
 
             # Update the frame to reflect changes
             frame.update()
@@ -475,17 +478,21 @@ class MainScreen(QtWidgets.QMainWindow):
                 input_frame_layout = QtWidgets.QHBoxLayout(input_frame)
                 input_frame_layout.setContentsMargins(0, 0, 0, 0)
                 input_frame_layout.setSpacing(50)
+                int_validator = QIntValidator()  # Allows any integer
 
                 # Add lower bound input
                 lower_bound_input = QtWidgets.QLineEdit(input_frame)
                 lower_bound_input.setPlaceholderText("Lower Bound")
                 lower_bound_input.setMinimumHeight(30)
+                lower_bound_input.setValidator(int_validator)  # Apply integer validation
+
                 input_frame_layout.addWidget(lower_bound_input)
 
                 # Add upper bound input
                 upper_bound_input = QtWidgets.QLineEdit(input_frame)
                 upper_bound_input.setPlaceholderText("Upper Bound")
                 upper_bound_input.setMinimumHeight(30)
+                upper_bound_input.setValidator(int_validator)  # Apply integer validation
                 input_frame_layout.addWidget(upper_bound_input)
 
                 # Align input frame to the right
