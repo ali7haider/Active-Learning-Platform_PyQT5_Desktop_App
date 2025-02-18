@@ -12,8 +12,10 @@ from botorch.utils.multi_objective.scalarization import get_chebyshev_scalarizat
 from gpytorch.mlls.sum_marginal_log_likelihood import SumMarginalLogLikelihood
 import numpy as np
 import warnings
+from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
 
 warnings.filterwarnings('ignore', category=RuntimeWarning)
+tkwargs = {"dtype": torch.double, "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu")}
 
 def run_multi_objective_optimization_three(
     df: pd.DataFrame,
@@ -22,7 +24,7 @@ def run_multi_objective_optimization_three(
     n_var: int,
     target_columns: list,
     batch_size: int,
-    ref_point: list,
+    reference_point: list,
     random_state: int = 42
 ) -> pd.DataFrame:
     """
@@ -49,7 +51,6 @@ def run_multi_objective_optimization_three(
     upper_bounds = [int(b) for b in upper_bounds]
 
     # Define tensor properties
-    tkwargs = {"dtype": torch.double, "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu")}
 
     # Define bounds as tensors
     lower_bounds_tensor = torch.tensor(lower_bounds, **tkwargs)
@@ -78,15 +79,14 @@ def run_multi_objective_optimization_three(
 
     model = ModelListGP(*models)
     mll = SumMarginalLogLikelihood(model.likelihood, model)
-    from botorch.acquisition.objective import IdentityMCMultiOutputObjective
 
     # Train Gaussian Process models
     fit_gpytorch_model(mll)
-
+    ref_point_2 = torch.tensor([float(x) for x in reference_point], **tkwargs)
     # Define acquisition function
     acqf = qLogNoisyExpectedHypervolumeImprovement(
         model=model,
-        ref_point=torch.tensor(ref_point),
+        ref_point=ref_point_2,
         X_baseline=train_x_gp,
         sampler=SobolQMCNormalSampler(torch.Size([512])),
         objective=IdentityMCMultiOutputObjective(outcomes=np.arange(n_obj).tolist()),

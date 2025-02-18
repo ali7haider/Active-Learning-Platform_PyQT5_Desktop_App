@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import pandas as pd
 import torch
@@ -30,9 +31,13 @@ try:
     print(df.head())
 
     # Define problem boundaries
+
     lower_bounds = torch.tensor([1, 1, 1, 1], **tkwargs)
     upper_bounds = torch.tensor([10, 5, 5, 5], **tkwargs)
     problem_bounds = torch.vstack([lower_bounds, upper_bounds])
+    # Debug: print tensor bounds
+    print(f"Lower bounds tensor:\n{lower_bounds}")
+    print(f"Upper bounds tensor:\n{upper_bounds}")
 
     # Set variables and objectives
     n_var = 4
@@ -45,6 +50,8 @@ try:
     train_x = torch.tensor(df.iloc[:, :n_var].to_numpy(), **tkwargs)
     train_obj = torch.tensor(df.iloc[:, n_var:n_var + n_obj].to_numpy(), **tkwargs)
     print("Tensor conversion completed!")
+    print(f"train_x shape: {train_x.shape}")
+    print(f"train_obj shape: {train_obj.shape}")
 
     # Normalize input data
     print("Normalizing input data...")
@@ -84,6 +91,13 @@ try:
     BATCH_SIZE = 5
     NUM_RESTARTS = 10
     RAW_SAMPLES = 128
+    print("DataFrame head:\n", df.head())
+    print("Lower bounds:\n", lower_bounds)
+    print("Upper bounds:\n", upper_bounds)
+    print("n_var:", n_var)
+    print("batch_size:", BATCH_SIZE)
+    print("ref_point:", ref_point)
+    print("random_state:", random_state)
 
     from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
     acq_func = qLogNoisyExpectedHypervolumeImprovement(

@@ -12,6 +12,7 @@ import os
 from objective_files.single_objective_code_func import run_optimization
 from objective_files.multi_objective_code_two_func import  run_multi_objective_optimization_two
 from objective_files.multi_objective_code_three_func import run_multi_objective_optimization_three
+from PyQt5.QtWidgets import QApplication, QLabel
 
 from datetime import datetime
 import csv
@@ -52,6 +53,8 @@ class MainScreen(QtWidgets.QMainWindow):
 
         self.btnRunExperimentMultiObj.clicked.connect(self.btnRunMultiObjExperiment_click)  # Run the experiment
         self.btnDownload.clicked.connect(self.btnDownload_click)
+        self.btnDownload_2.clicked.connect(self.btnDownload_click_2)
+
         self.btnTargetTwo.clicked.connect(lambda: self.update_target_visibility(2))
         self.btnTargetThree.clicked.connect(lambda: self.update_target_visibility(3))
 
@@ -118,13 +121,14 @@ class MainScreen(QtWidgets.QMainWindow):
 
             # Update UI: Reset results table & change stack widget page
             # Start experiment in a separate thread
-            # self.experiment_thread = MultiObjExperimentThread(batch_size, n_var, targets, self.df, self.column_bounds)
-            # self.experiment_thread.finished.connect(self.handle_experiment_result)
-            # self.experiment_thread.start()
+         
             # Show the DataFrame in the table
             self.resultTable_2.setRowCount(0)  # Set rows
             self.resultTable_2.setColumnCount(1)  # Set columns
             self.stackedWidget.setCurrentIndex(11) 
+            
+            
+            
             self.experiment_thread_multi = MultiObjExperimentThread(
             batch_size=batch_size,
             n_var=n_var,
@@ -134,6 +138,7 @@ class MainScreen(QtWidgets.QMainWindow):
         )
         
             # Connect the finished signal to a handler
+            self.experiment_thread_multi.message_signal.connect(self.lblLoading_2.setText)  # Show messages
             self.experiment_thread_multi.finished.connect(self.handle_experiment_result_multi)  # Make sure to define this function
             self.experiment_thread_multi.start()
 
@@ -317,6 +322,10 @@ class MainScreen(QtWidgets.QMainWindow):
 
     def handle_experiment_result_multi(self, result):
         try:
+            if result is None or isinstance(result, str):  # Handle errors
+                QtWidgets.QMessageBox.critical(self, "Error", result if result else "Optimization failed!")
+                self.lblLoading_2.setText("Optimization failed!")
+                return
             if isinstance(result, pd.DataFrame):
                 # Update the label
                 self.lblLoading_2.setText("Data shown successfully")
@@ -387,6 +396,45 @@ class MainScreen(QtWidgets.QMainWindow):
             # Show error message in case of failure
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to save results: {e}")
     
+    def btnDownload_click_2(self):
+        try:
+            # Get current datetime for the file name
+            current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            file_name = f"results_{current_time}.csv"
+
+            # Open a file dialog to select the save location
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                None,
+                "Save Results",
+                file_name,
+                "CSV Files (*.csv)"
+            )
+
+            if not file_path:  # If no file is selected, return
+                return
+
+            # Open the file for writing
+            with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+
+                # Write the headers
+                headers = [self.resultTable_2.horizontalHeaderItem(i).text() for i in range(self.resultTable_2.columnCount())]
+                writer.writerow(headers)
+
+                # Write table rows
+                for row in range(self.resultTable_2.rowCount()):
+                    row_data = [
+                        self.resultTable_2.item(row, col).text() if self.resultTable_2.item(row, col) else ""
+                        for col in range(self.resultTable_2.columnCount())
+                    ]
+                    writer.writerow(row_data)
+
+            # Show success message
+            QtWidgets.QMessageBox.information(None, "Success", f"Results saved successfully as {file_name}.")
+
+        except Exception as e:
+            # Show error message in case of failure
+            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to save results: {e}")
     
     def show_columns_for_bounds(self, frame):
         try:
@@ -609,8 +657,11 @@ class ExperimentThread(QtCore.QThread):
             return df_candidates
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
+import sys
+
 class MultiObjExperimentThread(QtCore.QThread):
-    finished = QtCore.pyqtSignal(object)  # Signal to emit the result
+    message_signal = QtCore.pyqtSignal(str)  # Signal to send messages to UI
+    finished = QtCore.pyqtSignal(object)  # Signal to emit the final result
 
     def __init__(self, batch_size, n_var, target_columns, df, column_bounds):
         super().__init__()
@@ -622,24 +673,24 @@ class MultiObjExperimentThread(QtCore.QThread):
 
     def run(self):
         try:
-            
             # Run the experiment in the background
             result = self.run_experiment(
                 self.batch_size, self.n_var, self.target_columns, self.df, self.column_bounds
             )
             
             self.finished.emit(result)  # Emit the result when done
+            self.message_signal.emit("🎉 Optimization completed successfully!")
+            
         except Exception as e:
-            self.finished.emit(f"Error: {str(e)}")
+            self.message_signal.emit(f"[ERROR] {str(e)}")
+            self.finished.emit(None)  # Emit None on failure
 
     def run_experiment(self, batch_size, n_var, target_columns, df, column_bounds):
         try:
-
             # Extract column names and reference numbers from target_columns
             target_column_names = [col[0] for col in target_columns]  # Extract only column names
             reference_numbers = [col[1] for col in target_columns]  
 
-            
             # Ensure that target_column_names are strings
             if not all(isinstance(col, str) for col in target_column_names):
                 raise ValueError("[ERROR] One or more target column names are not strings!")
@@ -648,25 +699,19 @@ class MultiObjExperimentThread(QtCore.QThread):
             non_target_columns = [col for col in column_bounds.keys() if col not in target_column_names]
 
             # Parse lower and upper bounds
-            lower_bounds = [column_bounds[col]['lower'] for col in non_target_columns]
-            upper_bounds = [column_bounds[col]['upper'] for col in non_target_columns]
+            lower_bounds = [int(column_bounds[col]['lower']) for col in non_target_columns]
+            upper_bounds = [int(column_bounds[col]['upper']) for col in non_target_columns]
 
-
-            # Convert bounds to int for safety
-            lower_bounds = [int(b) for b in lower_bounds]  
-            upper_bounds = [int(b) for b in upper_bounds]
-
-            
             # Validate that target columns exist in the DataFrame
             if not all(target_column in df.columns for target_column in target_column_names):
                 raise ValueError("[ERROR] One or more target columns are missing in the DataFrame!")
 
             # Determine the number of objectives
             n_obj = len(target_columns)
+            
+            self.message_signal.emit(f"Running {n_obj}-objective optimization...Please Wait")
 
-            # Call optimization function based on objectives
             if n_obj == 2:
-                print("[DEBUG] Running two-objective optimization...")
                 df_candidates = run_multi_objective_optimization_two(
                     df=df,
                     lower_bounds=lower_bounds,
@@ -674,10 +719,9 @@ class MultiObjExperimentThread(QtCore.QThread):
                     n_var=n_var,
                     target_columns=target_column_names,    
                     batch_size=batch_size,
-                    ref_point=reference_numbers
+                    reference_point=reference_numbers
                 )
             elif n_obj == 3:
-                print("[DEBUG] Running three-objective optimization...")
                 df_candidates = run_multi_objective_optimization_three(
                     df=df,
                     lower_bounds=lower_bounds,
@@ -685,16 +729,27 @@ class MultiObjExperimentThread(QtCore.QThread):
                     n_var=n_var,
                     target_columns=target_column_names,    
                     batch_size=batch_size,
-                    ref_point=reference_numbers
+                    reference_point=reference_numbers
                 )
             else:
-                raise ValueError("[ERROR] Currently only supports 2 or 3 objectives for multi-objective optimization.")
+                raise ValueError("[ERROR] Currently only supports 2 or 3 objectives.")
 
-            return df_candidates
+            return df_candidates  # Return the final result
+
         except Exception as e:
-            print(f"[ERROR] Failed to run experiment: {e}")
-            QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
+            return f"[ERROR] Failed to run experiment: {e}"
+class QTextStreamRedirector:
+    def __init__(self, label: QLabel):
+        self.label = label
+        self.text = ""
 
+    def write(self, message):
+        self.text += message
+        self.label.setText(self.text)  # Update the label with the new message
+        QApplication.processEvents()  # Ensure UI updates immediately
+
+    def flush(self):
+        pass  # Required for compatibility
 # Main application
 app = QtWidgets.QApplication(sys.argv)
 

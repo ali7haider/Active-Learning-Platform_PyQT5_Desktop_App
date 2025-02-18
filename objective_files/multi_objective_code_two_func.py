@@ -12,7 +12,7 @@ from botorch.exceptions import BadInitialCandidatesWarning
 from gpytorch.mlls.sum_marginal_log_likelihood import SumMarginalLogLikelihood
 from botorch.fit import fit_gpytorch_model
 import sys
-print(sys.executable)
+from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
 import warnings
 
 # Ensure warnings are suppressed
@@ -26,7 +26,7 @@ def run_multi_objective_optimization_two(
     n_var: int,
     target_columns: list,
     batch_size: int,
-    ref_point: list = [0, 0],
+    reference_point: list = [0, 0],
     random_state: int = 42
 ) -> pd.DataFrame:
     """
@@ -37,7 +37,6 @@ def run_multi_objective_optimization_two(
         lower_bounds (list): Lower bounds for the optimization variables.
         upper_bounds (list): Upper bounds for the optimization variables.
         n_var (int): Number of variables (features) to consider.
-        n_obj (int): Number of objectives (target columns).
         batch_size (int): Batch size for the optimization.
         ref_point (list): Reference point for hypervolume calculation.
         random_state (int): Seed for reproducibility.
@@ -45,78 +44,57 @@ def run_multi_objective_optimization_two(
     Returns:
         pd.DataFrame: DataFrame containing the optimized candidates.
     """
-    # Debug: print the starting of the optimization process
-    print("Running multi-objective optimization process...")
-    
-    # Debug: print the initial state of inputs
-    print("DataFrame head:\n", df.head())
-    print("Lower bounds:\n", lower_bounds)
-    print("Upper bounds:\n", upper_bounds)
-    print("n_var:", n_var)
-    print("target_columns:", target_columns)
-    print("batch_size:", batch_size)
-    print("ref_point:", ref_point)
-    print("random_state:", random_state)
+    print("Starting Multi-Objective Optimization Process...")
+    print("Preparing data and setting up models...")
 
-    # Ensure bounds are numeric
-    lower_bounds = [int(b) for b in lower_bounds]  # Convert lower bounds to float
-    upper_bounds = [int(b) for b in upper_bounds]  # Convert upper bounds to float
-    
     # Define tensor properties
     tkwargs = {"dtype": torch.double, "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu")}
     
     # Define bounds as tensors
+    print("Defining bounds for the optimization variables...")
     lower_bounds_tensor = torch.tensor(lower_bounds, **tkwargs)
     upper_bounds_tensor = torch.tensor(upper_bounds, **tkwargs)
     problem_bounds = torch.vstack([lower_bounds_tensor, upper_bounds_tensor])
-
-    # Debug: print tensor bounds
-    print(f"Lower bounds tensor:\n{lower_bounds_tensor}")
-    print(f"Upper bounds tensor:\n{upper_bounds_tensor}")
 
     # Normalize standard bounds for acquisition function
     standard_bounds = torch.zeros(2, n_var, **tkwargs)
     standard_bounds[1] = 1
 
-    # Debug: print standard bounds
-    print(f"Standard bounds:\n{standard_bounds}")
-
     # Set random seed
     torch.manual_seed(random_state)
+    print("Random seed set for reproducibility.")
 
     # Prepare training data
+    print("Loading input data for training...")
     train_x = torch.tensor(df.iloc[:, :n_var].to_numpy(), **tkwargs)
     train_obj = torch.tensor(df[target_columns].to_numpy(), **tkwargs)
-
-    # Debug: print training data shapes
-    print(f"train_x shape: {train_x.shape}")
-    print(f"train_obj shape: {train_obj.shape}")
 
     # Normalize inputs and define the model
     train_x_gp = normalize(train_x, problem_bounds)
     models = []
 
+    print("Initializing Gaussian Process (GP) models for each objective...")
     # Create and train separate models for each objective
     for i in range(train_obj.shape[-1]): 
         train_y = train_obj[..., i:i + 1]
         models.append(SingleTaskGP(train_x_gp, train_y, outcome_transform=Standardize(m=1)))
     model = ModelListGP(*models)
 
-    # Debug: print model state
-    print("Model initialized")
+    print("Model successfully initialized.")
 
     # Train Gaussian Process model
+    print("Training the GP model...")
     mll = SumMarginalLogLikelihood(model.likelihood, model)
     fit_gpytorch_model(mll)
+    print("Model training completed.")
 
-    # Debug: print training status
-    print("Model trained")
-    from botorch.acquisition.objective import IdentityMCMultiOutputObjective
+    ref_point_2 = torch.tensor([float(x) for x in reference_point], **tkwargs)
 
+    print("Initializing acquisition function for optimization...")
     # Define acquisition function
     acq_func = qLogNoisyExpectedHypervolumeImprovement(
         model=model,
-        ref_point=torch.tensor(ref_point, dtype=torch.double, **tkwargs),
+        ref_point=ref_point_2,
         X_baseline=train_x_gp,
         sampler=SobolQMCNormalSampler(torch.Size([512])),
         objective=IdentityMCMultiOutputObjective(outcomes=list(range(2))),
@@ -124,9 +102,9 @@ def run_multi_objective_optimization_two(
         cache_pending=True
     )
 
-    # Debug: print acquisition function status
-    print("Acquisition function initialized")
+    print("Acquisition function successfully initialized.")
 
+    print("Running optimization to find the best candidates...")
     # Optimize acquisition function to find the next candidates
     candidates, _ = optimize_acqf(
         acq_function=acq_func,
@@ -137,8 +115,7 @@ def run_multi_objective_optimization_two(
         options={"batch_limit": 5, "maxiter": 200}
     )
 
-    # Debug: print candidates shape
-    print(f"Optimized candidates shape: {candidates.shape}")
+    print("Optimization completed. Extracting results...")
 
     # Unnormalize and return the optimized candidates
     new_x = unnormalize(candidates.detach(), bounds=problem_bounds)
@@ -146,7 +123,8 @@ def run_multi_objective_optimization_two(
     df_candidates = pd.DataFrame(new_x, columns=df.columns[:n_var])
     df_candidates = df_candidates.round(2)
 
-    # Debug: print first few rows of the resulting dataframe
     print("Optimized candidates:\n", df_candidates.head())
 
+    print("Multi-objective optimization completed successfully!")
     return df_candidates
+
