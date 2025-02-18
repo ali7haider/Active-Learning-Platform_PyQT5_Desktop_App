@@ -3,13 +3,12 @@ import torch
 from botorch.models.gp_regression import SingleTaskGP
 from botorch.models.model_list_gp_regression import ModelListGP
 from botorch.models.transforms.outcome import Standardize
-from botorch import fit_gpytorch_model
+from botorch.fit import fit_gpytorch_model
 from botorch.optim import optimize_acqf
 from botorch.sampling import SobolQMCNormalSampler
 from botorch.acquisition.multi_objective.logei import qLogNoisyExpectedHypervolumeImprovement
 from botorch.utils.transforms import unnormalize, normalize
 from botorch.utils.multi_objective.scalarization import get_chebyshev_scalarization
-from botorch.acquisition.objective import IdentityMCMultiOutputObjective
 from gpytorch.mlls.sum_marginal_log_likelihood import SumMarginalLogLikelihood
 import numpy as np
 import warnings
@@ -21,7 +20,7 @@ def run_multi_objective_optimization_three(
     lower_bounds: list,
     upper_bounds: list,
     n_var: int,
-    n_obj: int,
+    target_columns: list,
     batch_size: int,
     ref_point: list,
     random_state: int = 42
@@ -44,10 +43,10 @@ def run_multi_objective_optimization_three(
     """
     # Debug: print the starting of the optimization process
     print("Running multi-objective optimization process...")
-
+    n_obj=3
     # Ensure bounds are numeric
-    lower_bounds = [float(b) for b in lower_bounds]
-    upper_bounds = [float(b) for b in upper_bounds]
+    lower_bounds = [int(b) for b in lower_bounds]
+    upper_bounds = [int(b) for b in upper_bounds]
 
     # Define tensor properties
     tkwargs = {"dtype": torch.double, "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu")}
@@ -66,7 +65,7 @@ def run_multi_objective_optimization_three(
 
     # Prepare training data
     train_x = torch.tensor(df.iloc[:, :n_var].to_numpy(), **tkwargs)
-    train_obj = torch.tensor(df.iloc[:, n_var:n_var + n_obj].to_numpy(), **tkwargs)
+    train_obj = torch.tensor(df[target_columns].to_numpy(), **tkwargs)
 
     # Normalize inputs and define the model
     train_x_gp = normalize(train_x, problem_bounds)
@@ -79,6 +78,7 @@ def run_multi_objective_optimization_three(
 
     model = ModelListGP(*models)
     mll = SumMarginalLogLikelihood(model.likelihood, model)
+    from botorch.acquisition.objective import IdentityMCMultiOutputObjective
 
     # Train Gaussian Process models
     fit_gpytorch_model(mll)

@@ -39,7 +39,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 # %matplotlib inline
 
-df = pd.read_csv("Synthetic Data.csv")
+df = pd.read_csv("Synthetic Data 2_Objectives.csv")
 
 df.shape
 

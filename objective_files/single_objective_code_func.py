@@ -6,7 +6,7 @@ from botorch.sampling import SobolQMCNormalSampler
 from botorch.optim import optimize_acqf
 from botorch.utils.transforms import unnormalize, normalize
 from botorch.acquisition.logei import qLogExpectedImprovement
-from botorch.fit import fit_gpytorch_model
+from botorch import fit_gpytorch_model
 
 import warnings
 warnings.filterwarnings('ignore', category=RuntimeWarning)

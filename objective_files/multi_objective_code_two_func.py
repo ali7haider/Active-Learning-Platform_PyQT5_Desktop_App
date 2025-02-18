@@ -6,24 +6,25 @@ from botorch.models.transforms.outcome import Standardize
 from botorch.optim.optimize import optimize_acqf
 from botorch.utils.transforms import unnormalize, normalize
 from botorch.acquisition.multi_objective.logei import qLogNoisyExpectedHypervolumeImprovement
-from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
 from botorch.sampling import SobolQMCNormalSampler
 from botorch.utils.multi_objective.hypervolume import Hypervolume
 from botorch.exceptions import BadInitialCandidatesWarning
 from gpytorch.mlls.sum_marginal_log_likelihood import SumMarginalLogLikelihood
-from botorch import fit_gpytorch_model
-
+from botorch.fit import fit_gpytorch_model
+import sys
+print(sys.executable)
 import warnings
 
 # Ensure warnings are suppressed
 warnings.filterwarnings('ignore', category=BadInitialCandidatesWarning)
+warnings.filterwarnings('ignore', category=RuntimeWarning)
 
 def run_multi_objective_optimization_two(
     df: pd.DataFrame,
     lower_bounds: list,
     upper_bounds: list,
     n_var: int,
-    n_obj: int,
+    target_columns: list,
     batch_size: int,
     ref_point: list = [0, 0],
     random_state: int = 42
@@ -52,14 +53,14 @@ def run_multi_objective_optimization_two(
     print("Lower bounds:\n", lower_bounds)
     print("Upper bounds:\n", upper_bounds)
     print("n_var:", n_var)
-    print("n_obj:", n_obj)
+    print("target_columns:", target_columns)
     print("batch_size:", batch_size)
     print("ref_point:", ref_point)
     print("random_state:", random_state)
 
     # Ensure bounds are numeric
-    lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
-    upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
+    lower_bounds = [int(b) for b in lower_bounds]  # Convert lower bounds to float
+    upper_bounds = [int(b) for b in upper_bounds]  # Convert upper bounds to float
     
     # Define tensor properties
     tkwargs = {"dtype": torch.double, "device": torch.device("cuda:0" if torch.cuda.is_available() else "cpu")}
@@ -85,7 +86,7 @@ def run_multi_objective_optimization_two(
 
     # Prepare training data
     train_x = torch.tensor(df.iloc[:, :n_var].to_numpy(), **tkwargs)
-    train_obj = torch.tensor(df.iloc[:, n_var:n_var + n_obj].to_numpy(), **tkwargs)
+    train_obj = torch.tensor(df[target_columns].to_numpy(), **tkwargs)
 
     # Debug: print training data shapes
     print(f"train_x shape: {train_x.shape}")
@@ -110,6 +111,7 @@ def run_multi_objective_optimization_two(
 
     # Debug: print training status
     print("Model trained")
+    from botorch.acquisition.objective import IdentityMCMultiOutputObjective
 
     # Define acquisition function
     acq_func = qLogNoisyExpectedHypervolumeImprovement(
@@ -117,7 +119,7 @@ def run_multi_objective_optimization_two(
         ref_point=torch.tensor(ref_point, dtype=torch.double, **tkwargs),
         X_baseline=train_x_gp,
         sampler=SobolQMCNormalSampler(torch.Size([512])),
-        objective=IdentityMCMultiOutputObjective(outcomes=list(range(n_obj))),
+        objective=IdentityMCMultiOutputObjective(outcomes=list(range(2))),
         prune_baseline=True,
         cache_pending=True
     )

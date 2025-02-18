@@ -11,7 +11,7 @@ import json
 import os
 from objective_files.single_objective_code_func import run_optimization
 from objective_files.multi_objective_code_two_func import  run_multi_objective_optimization_two
-from objective_files.multi_objective_code_three_func import run_multi_objective_optimization_three, run_multi_objective_optimization_two
+from objective_files.multi_objective_code_three_func import run_multi_objective_optimization_three
 
 from datetime import datetime
 import csv
@@ -65,7 +65,6 @@ class MainScreen(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(None, "Warning", "Please select a file in the Data page.")
             return
         
-        print("Multi-objective optimization selected.")
         # change the stack widget page to 4 
         self.stackedWidget.setCurrentIndex(8)
         # # Connect buttons to update target visibility
@@ -118,15 +117,15 @@ class MainScreen(QtWidgets.QMainWindow):
             self.lblLoading_2.setText("Loading... Please Wait")
 
             # Update UI: Reset results table & change stack widget page
-            self.resultTable_2.setRowCount(0)
-            self.resultTable_2.setColumnCount(len(targets))
-            self.stackedWidget.setCurrentIndex(11)
-            print(targets)
             # Start experiment in a separate thread
             # self.experiment_thread = MultiObjExperimentThread(batch_size, n_var, targets, self.df, self.column_bounds)
             # self.experiment_thread.finished.connect(self.handle_experiment_result)
             # self.experiment_thread.start()
-            experiment_thread = MultiObjExperimentThread(
+            # Show the DataFrame in the table
+            self.resultTable_2.setRowCount(0)  # Set rows
+            self.resultTable_2.setColumnCount(1)  # Set columns
+            self.stackedWidget.setCurrentIndex(11) 
+            self.experiment_thread_multi = MultiObjExperimentThread(
             batch_size=batch_size,
             n_var=n_var,
             target_columns=targets,
@@ -135,8 +134,8 @@ class MainScreen(QtWidgets.QMainWindow):
         )
         
             # Connect the finished signal to a handler
-            experiment_thread.finished.connect(self.handle_experiment_result_multi)  # Make sure to define this function
-            experiment_thread.start()
+            self.experiment_thread_multi.finished.connect(self.handle_experiment_result_multi)  # Make sure to define this function
+            self.experiment_thread_multi.start()
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {e}")
@@ -623,53 +622,77 @@ class MultiObjExperimentThread(QtCore.QThread):
 
     def run(self):
         try:
+            
             # Run the experiment in the background
             result = self.run_experiment(
                 self.batch_size, self.n_var, self.target_columns, self.df, self.column_bounds
             )
+            
             self.finished.emit(result)  # Emit the result when done
         except Exception as e:
             self.finished.emit(f"Error: {str(e)}")
 
     def run_experiment(self, batch_size, n_var, target_columns, df, column_bounds):
         try:
-            # Parse the column bounds into lower and upper bounds, excluding target columns
-            lower_bounds = [column_bounds[col]['lower'] for col in column_bounds.keys() if col not in target_columns]
-            upper_bounds = [column_bounds[col]['upper'] for col in column_bounds.keys() if col not in target_columns]
-            # Ensure bounds are numeric
-            lower_bounds = [float(b) for b in lower_bounds]  # Convert lower bounds to float
-            upper_bounds = [float(b) for b in upper_bounds]  # Convert upper bounds to float
 
-            # Check if the target columns are in the DataFrame
-            if not all(target_column in df.columns for target_column in target_columns):
-                raise ValueError(f"One or more target columns are missing in the DataFrame.")
+            # Extract column names and reference numbers from target_columns
+            target_column_names = [col[0] for col in target_columns]  # Extract only column names
+            reference_numbers = [col[1] for col in target_columns]  
 
-            # Call the optimization function based on the number of objectives (depends on length of target_columns)
-            n_obj = len(target_columns)
             
+            # Ensure that target_column_names are strings
+            if not all(isinstance(col, str) for col in target_column_names):
+                raise ValueError("[ERROR] One or more target column names are not strings!")
+
+            # Extract non-target columns safely
+            non_target_columns = [col for col in column_bounds.keys() if col not in target_column_names]
+
+            # Parse lower and upper bounds
+            lower_bounds = [column_bounds[col]['lower'] for col in non_target_columns]
+            upper_bounds = [column_bounds[col]['upper'] for col in non_target_columns]
+
+
+            # Convert bounds to int for safety
+            lower_bounds = [int(b) for b in lower_bounds]  
+            upper_bounds = [int(b) for b in upper_bounds]
+
+            
+            # Validate that target columns exist in the DataFrame
+            if not all(target_column in df.columns for target_column in target_column_names):
+                raise ValueError("[ERROR] One or more target columns are missing in the DataFrame!")
+
+            # Determine the number of objectives
+            n_obj = len(target_columns)
+
+            # Call optimization function based on objectives
             if n_obj == 2:
+                print("[DEBUG] Running two-objective optimization...")
                 df_candidates = run_multi_objective_optimization_two(
                     df=df,
                     lower_bounds=lower_bounds,
                     upper_bounds=upper_bounds,
                     n_var=n_var,
-                    target_columns=target_columns,    
-                    batch_size=batch_size
+                    target_columns=target_column_names,    
+                    batch_size=batch_size,
+                    ref_point=reference_numbers
                 )
             elif n_obj == 3:
+                print("[DEBUG] Running three-objective optimization...")
                 df_candidates = run_multi_objective_optimization_three(
                     df=df,
                     lower_bounds=lower_bounds,
                     upper_bounds=upper_bounds,
                     n_var=n_var,
-                    target_columns=target_columns,    
-                    batch_size=batch_size
+                    target_columns=target_column_names,    
+                    batch_size=batch_size,
+                    ref_point=reference_numbers
                 )
             else:
-                raise ValueError("Currently only supports 2 or 3 objectives for multi-objective optimization.")
+                raise ValueError("[ERROR] Currently only supports 2 or 3 objectives for multi-objective optimization.")
 
             return df_candidates
         except Exception as e:
+            print(f"[ERROR] Failed to run experiment: {e}")
             QtWidgets.QMessageBox.critical(None, "Error", f"Failed to run experiment: {e}")
 
 # Main application
